@@ -2,8 +2,8 @@
 
 Инструмент для формирования каркаса из CSS-селекторов на основании полученного HTML.
 
-## Зависимости
+## Разработка
 
-Установить: `make install`
+В проекте используется пакетный менеджер [bower](https://github.com/bower/bower). Для его работы требуется [node.js](http://nodejs.org/) и [npm](https://npmjs.org/).
 
-Удалить: `make clean`
+Установить bower и зависимости: `make install`
