@@ -5,30 +5,7 @@
  * @version 0.0.1
  */
 
-$(document).ready(function() {
-
-    // Событие срабатывает при отпускании клавиши на клавиатуре в текстовом поле для HTML-кода
-    $('#html-code').keyup(function () {
-
-        var html = $(this).val();						// Полученный HTML-код
-
-        // Отображение итогового результата
-        $('#css-code').val(
-            // Формирование CSS-каркаса
-            generateCSS(
-                // Вычисление уровней вложенности тегов и классов
-                generateLevel(
-                    // Парсинг html-разметки и формирование массива классов
-                    searchOpenTags(html)				// К массиву с данными об открывающихся тегах
-                        .concat(searchCloseTags(html))		// Конкатенируется массив с данными о закрывающихся тегах
-                        .concat(searchClasses(html))		// Конкатенируется массив с данными о классах
-                        .sort(function(a, b) {				// И полученный суммарный массив сортируется по возрастанию позиции вхождения элемента в html-строку
-                            return a.position - b.position;
-                        })
-                )
-            )
-        )
-    });
+(function(window, $) {
 
     // Начало
     // - Функции для парсинга HTML
@@ -151,23 +128,23 @@ $(document).ready(function() {
     /* Составление единого массива в формате: (на основании одноуровневого массива, склееного в порядке следования открывающих тегов, классов и закрывающих тегов)
      Array
      (
-        [0] => Array
-        (
-            [dtype] => open_tag
-            [name] => div
-            [single] => false
-            [classes] => Array
-            (
-                [0] => class_name_0
-                [1] => class_name_1
-                ...
-            )
-        )
-        [1] => Array
-        (
-            [dtype] => close_tag
-        )
-        ...
+     [0] => Array
+     (
+     [dtype] => open_tag
+     [name] => div
+     [single] => false
+     [classes] => Array
+     (
+     [0] => class_name_0
+     [1] => class_name_1
+     ...
+     )
+     )
+     [1] => Array
+     (
+     [dtype] => close_tag
+     )
+     ...
      )
      */
     function reformateArr(arr) {
@@ -215,17 +192,17 @@ $(document).ready(function() {
     /* Составление массива классов в формате:
      Array
      (
-         [0] => Array
-         (
-             [name] => class_name_0
-             [level] => 0
-         )
-         [1] => Array
-         (
-             [name] => class_name_1
-             [level] => 1
-         )
-         ...
+     [0] => Array
+     (
+     [name] => class_name_0
+     [level] => 0
+     )
+     [1] => Array
+     (
+     [name] => class_name_1
+     [level] => 1
+     )
+     ...
      )
      */
     function classesLevel(arr) {
@@ -340,4 +317,20 @@ $(document).ready(function() {
 
         return css;
     }
-});
+
+    window.autoclasscss = function(html) {
+        return generateCSS(
+            // Вычисление уровней вложенности тегов и классов
+            generateLevel(
+                // Парсинг html-разметки и формирование массива классов
+                searchOpenTags(html)				// К массиву с данными об открывающихся тегах
+                    .concat(searchCloseTags(html))		// Конкатенируется массив с данными о закрывающихся тегах
+                    .concat(searchClasses(html))		// Конкатенируется массив с данными о классах
+                    .sort(function(a, b) {				// И полученный суммарный массив сортируется по возрастанию позиции вхождения элемента в html-строку
+                        return a.position - b.position;
+                    })
+            )
+        )
+    };
+
+})(window, jQuery, undefined);
