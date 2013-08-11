@@ -1,4 +1,9 @@
-﻿// Copyright (c) 2011 Артём Курбатов | MIT License
+﻿/**
+ * AutoclassCSS - Generator CSS skeleton: https://github.com/tenorok/autoclassCSS
+ * @copyright 2012–2013 Artem Kurbatov, tenorok.ru
+ * @license MIT license
+ * @version 0.0.1
+ */
 
 $(document).ready(function() {
 	
