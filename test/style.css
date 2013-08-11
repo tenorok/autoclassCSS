@@ -1,38 +1,36 @@
-﻿* {
-	margin: 0;
-	padding: 0;
-	font-size: 100%;
+﻿html {
+    height: 100%;
 }
-html {
-	height: 100%;
-	font-size: 125%;
-}
-textarea {
-	box-sizing: content-box;
-}
+
 body {
-	height: 100%;
-	font-size: 50%; /* 10px */
+    height: 100%;
 }
-#main {
-	position: relative;
-	margin: 0 auto;
-	padding-top: 10px;
-	height: 96%;
-	min-width: 996px;
-	min-height: 96%;
-}	
-textarea {
-	display: block;
-	margin: 0 20px;
-	padding: 10px;
-	width: 43%;
-	height: 90%;
-	font: 1.2em Courier, monospace;
+
+.page {
+    min-width: 755px;
+    height: 90%;
+    padding: 0 2% 2% 2%;
 }
-.left-area {
-	float: left;
+
+.html-block,
+.css-block {
+    width: 48%;
+    height: 96%;
 }
-.right-area {
-	float: right;
+
+.html-block {
+    float: left;
+    margin-right: 2%;
+}
+
+.css-block {
+    float: right;
+    margin-left: 2%;
+}
+
+.html-area,
+.css-area {
+    width: 100%;
+    height: 100%;
+    font: 12px Courier, monospace;
 }
