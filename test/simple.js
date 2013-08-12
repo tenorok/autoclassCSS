@@ -20,7 +20,7 @@ describe("Простые тесты", function() {
             '		}\n' +
             '	.c {\n' +
             '		\n' +
-            '	}' + '\n'
+            '	}\n'
         ],
         [
             '<header class="header" data-class="fake">' +
