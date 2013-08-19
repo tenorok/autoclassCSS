@@ -107,7 +107,11 @@ describe("Простые тесты", function() {
 
     it("contains spec with an expectation", function() {
         data.forEach(function(test) {
-            expect(autoclasscss(test[0])).toBe(test[1]);
+            expect(
+                new Autoclasscss(test[0])
+                    .indent({tabs: true})
+                    .get()
+            ).toBe(test[1]);
         });
     });
 });
