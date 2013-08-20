@@ -54,6 +54,21 @@ Autoclasscss.prototype = {
      */
     get: function() {
 
+        /**
+         * Проитерироваться по всем вхождениям подстроки в строку
+         * @param {string} string Исходная строка
+         * @param {RegExp} regexp Регулярное выражения для поиска подстроки
+         * @param {Function} callback Колбек будет вызван для каждого вхождения
+         */
+        function iterateSubstr(string, regexp, callback) {
+
+            var match;
+
+            while((match = regexp.exec(string)) != null) {
+                callback.call(this, match);
+            }
+        }
+
         // Начало
         // - Функции для парсинга HTML
 
@@ -87,41 +102,23 @@ Autoclasscss.prototype = {
             return bracket;
         }
 
-        // Поиск закрывающих тегов
-        function searchCloseTags(str) {
-
-            var bracket = new Array();
-
-            var pattern = '</';
-
-            var pos = str.indexOf(pattern);
-
-            for(var count = 0; pos != -1; count++) {
-
-                bracket[count] = new Array();
-                bracket[count]['dtype'] = 'close_tag';
-                bracket[count]['position'] = pos;
-
-                pos = str.indexOf(pattern, pos + pattern.length);
-            }
-
-            return bracket;
-        }
-
-
         /**
-         * Проитерироваться по всем вхождениям подстроки в строку
-         * @param {string} string Исходная строка
-         * @param {RegExp} regexp Регулярное выражения для поиска подстроки
-         * @param {Function} callback Колбек будет вызван для каждого вхождения
+         * Получить информационный массив по всем закрывающим тегам в HTML
+         * @param {string} html Исходный HTML
+         * @returns {Array}
          */
-        function iterateSubstr(string, regexp, callback) {
+        function searchCloseTags(html) {
 
-            var match;
+            var closeTagsInfo = [];
 
-            while((match = regexp.exec(string)) != null) {
-                callback.call(this, match);
-            }
+            iterateSubstr(html, /<\//g, function(closeTag) {
+                closeTagsInfo.push({
+                    dtype: 'close_tag',
+                    position: closeTag.index
+                });
+            });
+
+            return closeTagsInfo;
         }
 
         /**
