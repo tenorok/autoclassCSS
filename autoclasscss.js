@@ -17,20 +17,34 @@ function Autoclasscss(html) {
 
     this.html = html;
 
-    this.params = {
-        indent: { spaces: 4 }
-    };
+    this.params = {};
+    this.indent('spaces', 4);
 }
 
 Autoclasscss.prototype = {
 
     /**
      * Настройка отступов
-     * @param {Object} option Например {tabs: true} или {spaces: 4}
+     * @param {string} type Тип отступов: tabs или spaces
+     * @param {number} [count] Количество символов в одном отступе
      * @returns {Autoclasscss}
      */
-    indent: function(option) {
-        this.params.indent = option;
+    indent: function(type, count) {
+
+        count = count || 1;
+
+        var indents = {
+                tabs: '	',
+                spaces: ' '
+            },
+            indentStr = indents[type];
+
+        if(!indentStr) {
+            throw new Error('Unknown indent type: ' + type);
+        }
+
+        this.params.indent = new Array(count + 1).join(indentStr);
+
         return this;
     },
 

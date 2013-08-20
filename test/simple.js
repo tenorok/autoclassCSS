@@ -109,7 +109,7 @@ describe("Простые тесты", function() {
         data.forEach(function(test) {
             expect(
                 new Autoclasscss(test[0])
-                    .indent({tabs: true})
+                    .indent('tabs')
                     .get()
             ).toBe(test[1]);
         });
