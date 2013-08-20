@@ -3,7 +3,7 @@ describe("Простые тесты", function() {
     var data = [
         [
             '<div class="a">' +
-                '<div class="b">' +
+                '<div class=\'b\'>' +
                     '<div class="d"></div>' +
                 '</div>' +
                 '<div class="c"></div>' +
@@ -24,11 +24,12 @@ describe("Простые тесты", function() {
         ],
         [
             '<header class="header" data-class="fake">' +
-                '<img id="logo" class="logo">' +
+                '<img id="logo" class=" logo">' +
                 '<ul class="menu clearfix">' +
-                    '<li class="menu__item">home</li>' +
-                    '<li class="menu__item menu__item_current_yes">projects</li>' +
-                    '<li class="menu__item">contacts</li>' +
+                    '<li class="  menu__item ">home</li>' +
+                    '<li class="">news</li>' +
+                    '<li class="menu__item    menu__item_current_yes">projects</li>' +
+                    '<li class="menu__item ">contacts</li>' +
                 '</ul>' +
             '</header>',
 

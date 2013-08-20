@@ -108,57 +108,70 @@ Autoclasscss.prototype = {
             return bracket;
         }
 
-        // Поиск классов
-        function searchClasses(str) {
 
-            var bracket = new Array();
+        /**
+         * Проитерироваться по всем вхождениям подстроки в строку
+         * @param {string} string Исходная строка
+         * @param {RegExp} regexp Регулярное выражения для поиска подстроки
+         * @param {Function} callback Колбек будет вызван для каждого вхождения
+         */
+        function iterateSubstr(string, regexp, callback) {
 
-            var pattern = /\s+class\s*=\s*('|")\s*[-A-Za-z0-9_\s*]+\s*('|")/i; // Класс (с учётом возможности пробелов по бокам равенства и пробелов вокруг классов в кавычках)
+            var match;
 
-            var pos = str.search(pattern);
-            var old_pos = pos;
-            var old_pos2 = -1;
-
-            for(var count = 0; pos != -1; count++) {
-
-                var cls = str.match(pattern)[0]
-                    .match(/('|")[\s*-A-Za-z0-9_\s*]+('|")/i)[0]
-                    .replace(/\s*('|")\s*/g, '');                  // class="всё_что_находится_здесь"
-
-                // Если в кавычках указан хотя бы один класс
-                if(cls) {
-
-                    // Если в кавычках указано несколько классов, то их надо разбить по одному
-                    var res = 	cls
-                        .replace(/\s+/g, ' ')
-                        .split(' ');
-
-                    for(var c = 0; c < res.length; c++) {
-                        bracket[count] = new Array();
-                        bracket[count]['dtype'] = 'class';
-                        bracket[count]['position'] = pos;
-                        bracket[count]['val'] = res[c];
-                        count++;
-                    }
-                    count--;
-                }
-                else
-                    count--;
-
-                str = str.substr(pos - old_pos2);
-
-                pos = str.search(pattern);
-
-                if(pos >= 0) {
-                    pos += old_pos + 1;
-                    old_pos2 = old_pos;
-                    old_pos += pos - old_pos2;
-                }
-
+            while((match = regexp.exec(string)) != null) {
+                callback.call(this, match);
             }
-
-            return bracket;
         }
+
+        /**
+         * Получить содержимое атрибута class
+         * @param {string} classAttr Вырванный из HTML кусок с атрибутом class
+         * @returns {string}
+         */
+        function getClassAttrContent(classAttr) {
+            return classAttr.match(/('|")[\s*-A-Za-z0-9_\s*]+('|")/i)[0].replace(/\s*('|")\s*/g, '');
+        }
+
+        /**
+         * Проитерироваться по классам в атрибуте class
+         * @param {string} classAttrContent Содержимое атрибута class
+         * @param {Function} callback Колбек будет вызван для каждого класса
+         */
+        function iterateClassesInAttr(classAttrContent, callback) {
+
+            // Если атрибут класса пустой
+            if(!classAttrContent) return;
+
+            classAttrContent.replace(/\s+/g, ' ').split(' ').forEach(function(cls) {
+                callback.call(this, cls);
+            });
+        }
+
+        /**
+         * Получить информационный массив по всем классам в HTML
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function searchClasses(html) {
+
+            var classesInfo = [];
+
+            // Перебор всех атрибутов class в html
+            iterateSubstr(html, /\s+class\s*=\s*('|")\s*[-A-Za-z0-9_\s*]+\s*('|")/g, function(classAttr) {
+
+                iterateClassesInAttr(getClassAttrContent(classAttr[0]), function(cls) {
+                    classesInfo.push({
+                        dtype: 'class',
+                        position: classAttr.index,
+                        val: cls
+                    });
+                });
+            });
+
+            return classesInfo;
+        }
+
         // Функции для парсинга HTML -
         // Конец
 
