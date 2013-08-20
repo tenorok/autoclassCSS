@@ -359,16 +359,24 @@ Autoclasscss.prototype = {
             return css;
         }
 
+        /**
+         * Получить информационный массив по HTML-структуре
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function getHtmlStructureInfo(html) {
+            return searchOpenTags(html)
+                .concat(searchCloseTags(html))
+                .concat(searchClasses(html))
+                .sort(function(a, b) {
+                    return a.position - b.position;
+                });
+        }
+
         return generateCSS(
             // Вычисление уровней вложенности тегов и классов
             generateLevel(
-                // Парсинг html-разметки и формирование массива классов
-                searchOpenTags(this.html)				// К массиву с данными об открывающихся тегах
-                    .concat(searchCloseTags(this.html))		// Конкатенируется массив с данными о закрывающихся тегах
-                    .concat(searchClasses(this.html))		// Конкатенируется массив с данными о классах
-                    .sort(function(a, b) {				// И полученный суммарный массив сортируется по возрастанию позиции вхождения элемента в html-строку
-                        return a.position - b.position;
-                    })
+                getHtmlStructureInfo(this.html)
             )
         );
     }
