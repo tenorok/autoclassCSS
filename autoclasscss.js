@@ -69,37 +69,24 @@ Autoclasscss.prototype = {
             }
         }
 
-        // Начало
-        // - Функции для парсинга HTML
+        /**
+         * Получить информационный массив по всем открывающим тегам в HTML
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function searchOpenTags(html) {
 
-        // Поиск открывающих тегов
-        function searchOpenTags(str) {
+            var openTagsInfo = [];
 
-            var bracket = new Array();
+            iterateSubstr(html, /<[-A-Za-z0-9_]+/g, function(openTag) {
+                openTagsInfo.push({
+                    dtype: 'open_tag',
+                    position: openTag.index,
+                    name: openTag[0].substr(1)
+                });
+            });
 
-            var pattern = /<[-A-Za-z0-9_]+/i; // Открывающие теги
-
-            var pos = str.search(pattern);
-            var old_pos = pos;
-
-            for(var count = 0; pos != -1; count++) {
-
-                var val = str.match(pattern);
-
-                bracket[count] = new Array();
-                bracket[count]['dtype'] = 'open_tag';
-                bracket[count]['position'] = old_pos;
-                bracket[count]['name'] = val[0].substr(1);
-
-                str = str.substr(pos + 1);
-                pos = str.search(pattern);
-
-                if(pos >= 0) {
-                    old_pos += pos + 1;
-                }
-            }
-
-            return bracket;
+            return openTagsInfo;
         }
 
         /**
@@ -168,9 +155,6 @@ Autoclasscss.prototype = {
 
             return classesInfo;
         }
-
-        // Функции для парсинга HTML -
-        // Конец
 
         // Начало
         // - Функции вычисления вложенности классов
