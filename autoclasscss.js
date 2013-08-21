@@ -10,8 +10,8 @@
 
 /**
  * Конструктор
- * @param {string} html HTML-разметка
  * @constructor
+ * @param {string} html HTML-разметка
  */
 function Autoclasscss(html) {
 
@@ -25,9 +25,12 @@ Autoclasscss.prototype = {
 
     /**
      * Настройка отступов
-     * @param {string} type Тип отступов: tabs или spaces
-     * @param {number} [count] Количество символов в одном отступе
-     * @returns {Autoclasscss}
+     * @param {string} type Тип отступов, принимает одно из следующих значений:
+     *     "tabs" - табы
+     *     "spaces" - пробелы
+     * @param {number} [count=1] Количество символов в одном отступе
+     * @throws {Error} Неизвестный тип отступов
+     * @returns {this}
      */
     indent: function(type, count) {
 
@@ -55,10 +58,16 @@ Autoclasscss.prototype = {
     get: function() {
 
         /**
+         * Колбек вызывается для каждого вхождения подстроки в строку
+         * @callback Autoclasscss~iterateSubstrCallback
+         * @param {Object} Информация о текущем вхождении
+         */
+
+        /**
          * Проитерироваться по всем вхождениям подстроки в строку
          * @param {string} string Исходная строка
          * @param {RegExp} regexp Регулярное выражения для поиска подстроки
-         * @param {Function} callback Колбек будет вызван для каждого вхождения
+         * @param {Autoclasscss~iterateSubstrCallback} callback Колбек будет вызван для каждого вхождения
          */
         function iterateSubstr(string, regexp, callback) {
 
@@ -118,9 +127,15 @@ Autoclasscss.prototype = {
         }
 
         /**
+         * Колбек вызывается для каждого класса в атрибуте class
+         * @callback Autoclasscss~iterateClassesInAttrCallback
+         * @param {string} Текущий класс
+         */
+
+        /**
          * Проитерироваться по классам в атрибуте class
          * @param {string} classAttrContent Содержимое атрибута class
-         * @param {Function} callback Колбек будет вызван для каждого класса
+         * @param {Autoclasscss~iterateClassesInAttrCallback} callback Колбек будет вызван для каждого класса
          */
         function iterateClassesInAttr(classAttrContent, callback) {
 
