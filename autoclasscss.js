@@ -177,72 +177,56 @@ Autoclasscss.prototype = {
         function generateLevel(arr) {
 
             return classesLevel(
-                reformateArr(arr)
+                putClassesIntoTags(arr)
             );
         }
 
-        /* Составление единого массива в формате: (на основании одноуровневого массива, склееного в порядке следования открывающих тегов, классов и закрывающих тегов)
-         Array
-         (
-         [0] => Array
-         (
-         [dtype] => open_tag
-         [name] => div
-         [single] => false
-         [classes] => Array
-         (
-         [0] => class_name_0
-         [1] => class_name_1
-         ...
-         )
-         )
-         [1] => Array
-         (
-         [dtype] => close_tag
-         )
-         ...
-         )
+        /**
+         * Узнать является ли тег одиночным
+         * @param {string} tag Имя тега
+         * @returns {boolean}
          */
-        function reformateArr(arr) {
+        function isSingleTag(tag) {
+            return !!~[
+                '!doctype', 'area', 'base', 'br', 'col', 'command', 'embed', 'frame',
+                'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'wbr'
+            ].indexOf(tag);
+        }
 
-            var tree = new Array();
-            var iterate = -1;
-            var cls;
-            var singleTags = ['!doctype', 'base', 'br', 'frame', 'hr', 'img', 'input', 'link', 'meta'];
+        /**
+         * Получить массив тегов с их классами
+         * @param {Array} htmlStructureInfo Информационный массив по HTML-структуре
+         * @returns {Array}
+         */
+        function putClassesIntoTags(htmlStructureInfo) {
 
-            for(e in arr) {
+            var tags = [];
 
-                switch(arr[e]['dtype']) {
+            htmlStructureInfo.forEach(function(element) {
+
+                switch(element.dtype) {
 
                     case 'open_tag':
-                        tree[++iterate] = new Array();
-                        tree[iterate]['dtype'] = 'open_tag';
-                        tree[iterate]['name'] = arr[e]['name'];
-
-                        if($.inArray(arr[e]['name'], singleTags) >= 0)
-                            tree[iterate]['single'] = true;
-                        else
-                            tree[iterate]['single'] = false;
-
-                        tree[iterate]['level'] = null;
-
-                        tree[iterate]['classes'] = new Array();
-                        cls = -1;
+                        tags.push({
+                            dtype: element.dtype,
+                            name: element.name,
+                            single: isSingleTag(element.name),
+                            classes: []
+                        });
                         break;
 
                     case 'class':
-                        tree[iterate]['classes'][++cls] = new Array();
-                        tree[iterate]['classes'][cls] = arr[e]['val'];
+                        tags[tags.length - 1].classes.push(element.val);
                         break;
 
                     case 'close_tag':
-                        tree[++iterate] = new Array();
-                        tree[iterate]['dtype'] = 'close_tag';
-                        break;
+                        tags.push({
+                            dtype: element.dtype
+                        });
                 }
-            }
+            });
 
-            return tree;
+            return tags;
         }
 
         /* Составление массива классов в формате:
@@ -268,7 +252,7 @@ Autoclasscss.prototype = {
             var repete = new Array();													// Массив для отслеживания повторов классов
             var iterate = -1;
 
-            for(e in arr) {																// Цикл по массиву, составленному функцией reformateArr()
+            for(e in arr) {																// Цикл по массиву, составленному функцией putClassesIntoTags()
 
                 switch(arr[e]['dtype']) {
 
