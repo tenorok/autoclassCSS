@@ -20,7 +20,7 @@ describe("Простые тесты", function() {
             '		}\n' +
             '	.c {\n' +
             '		\n' +
-            '	}\n'
+            '	}'
         ],
         [
             '<header class="header" data-class="fake">' +
@@ -42,15 +42,12 @@ describe("Простые тесты", function() {
             '	.menu {\n' +
             '		\n' +
             '	}\n' +
-            '		.menu li {\n' +
-            '			\n' +
-            '		}\n' +
             '		.menu__item {\n' +
             '			\n' +
             '		}\n' +
             '		.menu__item_current_yes {\n' +
             '			\n' +
-            '		}\n'
+            '		}'
         ],
         [
             '<!DOCTYPE html>' +
@@ -102,7 +99,7 @@ describe("Простые тесты", function() {
             '				}\n' +
             '				.b-info__position {\n' +
             '					\n' +
-            '				}\n'
+            '				}'
         ]
     ];
 
@@ -111,6 +108,9 @@ describe("Простые тесты", function() {
             expect(
                 new Autoclasscss(test[0])
                     .indent('tabs')
+                    .ignore('clearfix')
+//                    .flate(true)
+//                    .inner(false)
                     .get()
             ).toBe(test[1]);
         });
