@@ -16,8 +16,21 @@ function Autoclasscss(html) {
 
     this.html = html;
 
-    this.params = {};
+    this.params = {
+        ignore: []
+    };
+
     this.indent('spaces', 4);
+}
+
+/**
+ * Продублировать строку
+ * @param {string} string Строка
+ * @param {number} count Количество дублирований
+ * @returns {string}
+ */
+function duplicateStr(string, count) {
+    return new Array(count + 1).join(string);
 }
 
 Autoclasscss.prototype = {
@@ -36,7 +49,7 @@ Autoclasscss.prototype = {
         count = count || 1;
 
         var indents = {
-                tabs: '	',
+                tabs: '\t',
                 spaces: ' '
             },
             indentStr = indents[type];
@@ -45,7 +58,21 @@ Autoclasscss.prototype = {
             throw new Error('Unknown indent type: ' + type);
         }
 
-        this.params.indent = new Array(count + 1).join(indentStr);
+        this.params.indent = duplicateStr(indentStr, count);
+
+        return this;
+    },
+
+    /**
+     * Добавление игнорируемых классов
+     * @param {string|Array} classes Класс или массив классов
+     * @returns {this}
+     */
+    ignore: function(classes) {
+
+        typeof classes === 'string'
+            ? this.params.ignore.push(classes)
+            : (this.params.ignore = this.params.ignore.concat(classes));
 
         return this;
     },
