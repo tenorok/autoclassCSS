@@ -3,10 +3,9 @@
  * @copyright 2012–2013 Artem Kurbatov, tenorok.ru
  * @license MIT license
  * @version 0.0.1
- * @requires jQuery
  */
 
-(function(window, $) {
+(function(window) {
 
 /**
  * Конструктор
@@ -383,4 +382,4 @@ Autoclasscss.prototype = {
 
 window.Autoclasscss = Autoclasscss;
 
-})(window, jQuery, undefined);
+})(window, undefined);
