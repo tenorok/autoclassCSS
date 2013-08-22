@@ -117,7 +117,7 @@ Autoclasscss.prototype = {
 
             iterateSubstr(html, /<[-A-Za-z0-9_]+/g, function(openTag) {
                 openTagsInfo.push({
-                    dtype: 'open_tag',
+                    type: 'tag-open',
                     position: openTag.index,
                     name: openTag[0].substr(1)
                 });
@@ -137,7 +137,7 @@ Autoclasscss.prototype = {
 
             iterateSubstr(html, /<\//g, function(closeTag) {
                 closeTagsInfo.push({
-                    dtype: 'close_tag',
+                    type: 'tag-close',
                     position: closeTag.index
                 });
             });
@@ -189,7 +189,7 @@ Autoclasscss.prototype = {
 
                 iterateClassesInAttr(getClassAttrContent(classAttr[0]), function(cls) {
                     classesInfo.push({
-                        dtype: 'class',
+                        type: 'class',
                         position: classAttr.index,
                         val: cls
                     });
@@ -222,11 +222,11 @@ Autoclasscss.prototype = {
 
             htmlStructureInfo.forEach(function(element) {
 
-                switch(element.dtype) {
+                switch(element.type) {
 
-                    case 'open_tag':
+                    case 'tag-open':
                         tags.push({
-                            dtype: element.dtype,
+                            type: element.type,
                             name: element.name,
                             single: isSingleTag(element.name),
                             classes: []
@@ -237,9 +237,9 @@ Autoclasscss.prototype = {
                         tags[tags.length - 1].classes.push(element.val);
                         break;
 
-                    case 'close_tag':
+                    case 'tag-close':
                         tags.push({
-                            dtype: element.dtype
+                            type: element.type
                         });
                 }
             });
@@ -259,7 +259,7 @@ Autoclasscss.prototype = {
                 exist = []; // Добавленные классы
 
             tags.forEach(function(tag) {
-                if(tag.dtype === 'open_tag') {
+                if(tag.type === 'tag-open') {
                     tree.push(tag);
                     addClasses(tag.classes, tree.length - 1);
                     tag.single && tree.pop();
