@@ -83,6 +83,8 @@ Autoclasscss.prototype = {
      */
     get: function() {
 
+        var that = this;
+
         /**
          * Колбек вызывается для каждого вхождения подстроки в строку
          * @callback Autoclasscss~iterateSubstrCallback
@@ -197,16 +199,6 @@ Autoclasscss.prototype = {
             return classesInfo;
         }
 
-        // Начало
-        // - Функции вычисления вложенности классов
-
-        function generateLevel(arr) {
-
-            return classesLevel(
-                putClassesIntoTags(arr)
-            );
-        }
-
         /**
          * Узнать является ли тег одиночным
          * @param {string} tag Имя тега
@@ -255,133 +247,80 @@ Autoclasscss.prototype = {
             return tags;
         }
 
-        /* Составление массива классов в формате:
-         Array
-         (
-         [0] => Array
-         (
-         [name] => class_name_0
-         [level] => 0
-         )
-         [1] => Array
-         (
-         [name] => class_name_1
-         [level] => 1
-         )
-         ...
-         )
+        /**
+         * Получить плоский массив классов с указанием их уровня вложенности
+         * @param {Array} tags Массив тегов с их классами
+         * @returns {Array}
          */
-        function classesLevel(arr) {
+        function getClassLevels(tags) {
 
-            var classes = new Array();													// Массив для ретурна
-            var tree = new Array();														// Массив для отслеживания дерева
-            var repete = new Array();													// Массив для отслеживания повторов классов
-            var iterate = -1;
+            var classes = [],
+                tree = [], // Для контроля уровня вложенности
+                exist = []; // Добавленные классы
 
-            for(e in arr) {																// Цикл по массиву, составленному функцией putClassesIntoTags()
-
-                switch(arr[e]['dtype']) {
-
-                    case 'open_tag':													// Если текущий элемент является открывающим тегом
-
-                        tree.push(arr[e]);												// Тег открылся, значит надо добавить его в дерево
-
-                        var level = -1;
-
-                        for(t in tree) {												// Цикл по тегам дерева
-
-                            if(tree[t]['classes'].length > 0) {							// Если у тега есть хотя бы один класс
-
-                                // Начало - Высчитывание level
-                                if(tree[t]['level'] == null) {							// Если к этому тегу идёт первое обращение
-
-                                    for(c in tree[t]['classes']) {						// Цикл по классам текущего тега
-
-                                        var class_name = tree[t]['classes'][c];			// Для удобства имя класса перегоняется в отдельную переменную
-
-                                        if($.inArray(class_name, repete) < 0) {			// Если в массиве уже добавленных ранее классов нет текущего класса тега
-
-                                            level++;									// Прибавление уровня вложенности на единицу
-                                            break;										// и выход из цикла
-                                        }
-                                    }
-                                }
-                                else													// Иначе к этому тегу идёт не первое обращение
-                                    level = tree[t]['level'];							// и у него уже задан уровень, остаётся только его переприсвоить
-                                // Конец  - Высчитывание level
-
-                                addClass(tree[t]['classes'], false);					// Добавление в массив классов всех необходимых классов текущего тега
-
-                                if(tree[t]['name'] == 'ul' || tree[t]['name'] == 'ol')	// Если текущий тег называется ul или ol
-                                    addClass(tree[t]['classes'], 'li');					// то для его элементов так же добавляется блок стилей
-
-                                tree[t]['level'] = level;								// Сохранение высчитанного уровня для тега
-                            }
-                        }
-
-                        if(arr[e]['single'])											// Если тег одиночный, то он не участвует в иерархическом дереве
-                            tree.pop();													// и его надо удалить
-
-                        break;															// Выход из case
-
-                    case 'close_tag':													// Если текущий элемент является закрывающим тегом
-
-                        tree.pop();														// Если тег закрылся, то нужно удалить его из дерева
-
-                        break;															// Выход из case
+            tags.forEach(function(tag) {
+                if(tag.dtype === 'open_tag') {
+                    tree.push(tag);
+                    addClasses(tag.classes, tree.length - 1);
+                    tag.single && tree.pop();
+                } else {
+                    tree.pop();
                 }
+            });
+
+            /**
+             * Нужно ли добавлять класс в вывод
+             * @param {string} cls Класс
+             * @returns {boolean}
+             */
+            function isOkClass(cls) {
+                return !~exist.indexOf(cls) && !~that.params.ignore.indexOf(cls);
             }
 
-            // Функция добавления элемента в массив классов, который затем будет выведен
-            function addClass(tagClss, mode) {											// В качестве первого параметра принимается массив классов текущего тега
+            /**
+             * Добавить класс к выводу
+             * @param {Array} tagClasses Массив классов тега
+             * @param {number} level Уровень вложенности тега
+             */
+            function addClasses(tagClasses, level) {
 
-                var addLevel = 0;														// Переменная для задания дополнительного уровня вложенности без влияния на общую иерархию вложенности
+                tagClasses.forEach(function(cls) {
 
-                for(c in tagClss) {														// Цикл по классам тега
+                    if(!isOkClass(cls)) return;
+                    exist.push(cls);
 
-                    var class_name = tagClss[c];										// Для удобства имя класса перегоняется в отдельную переменную
-
-                    if(class_name != 'clearfix') {										// Если текущий класс не называется clearfix
-
-                        if(mode == 'li') {												// Если текущий модификатор предусматривает подготовку стилей для li
-
-                            class_name += ' li';										// то в конец имени класса добавляется li
-                            addLevel = 1;												// и для этого блока увеличивается уровень вложенности относительно текущего уровня на единицу
-                        }
-
-                        if($.inArray(class_name, repete) < 0) {							// Если в массиве уже добавленных ранее классов нет текущего класса тега
-
-                            classes[++iterate] = new Array();							// Создание подмассива для класса в массиве классов
-                            classes[iterate]['name'] = class_name;						// Добавление имени класса в подмассив
-                            classes[iterate]['level'] = level + addLevel;				// Добавление уровня вложенности класса в подмассив
-                        }
-
-                        repete.push(class_name);										// Добавление текущего класса в массив для отслеживания повторов
-                    }
-                }
+                    classes.push({
+                        name: cls,
+                        level: level
+                    });
+                });
             }
 
-            return classes;																// Возврат конечного сформированного массива, готового к выводу
+            return classes;
         }
 
-        // Функции вычисления вложенности тегов и классов
-        // Конец
+        /**
+         * Сформировать CSS-каркас
+         * @param {Array} classes Плоский массив классов с указанием их уровня вложенности
+         * @returns {string}
+         */
+        function genCSSSkeleton(classes) {
 
-        // Формирование строки каркаса CSS для дальнейшего вывода
-        function generateCSS(classes) {
+            var css = [];
 
-            var css  = '';
+            classes.forEach(function(cls) {
 
-            for(var cls in classes) {
+                var paramsIndent = that.params.indent,
+                    indent = duplicateStr(paramsIndent, cls.level);
 
-                var tabs = '';
-                for(var l = 0; l < classes[cls]['level']; l++)
-                    tabs += '	';
+                css.push(
+                    indent + '.' + cls.name + ' {\n' +
+                        indent + paramsIndent + '\n' +
+                    indent + '}'
+                );
+            });
 
-                css += tabs + '.' + classes[cls]['name'] + ' {\n' + tabs + '	\n' + tabs + '}\n';
-            }
-
-            return css;
+            return css.join('\n');
         }
 
         /**
@@ -398,10 +337,11 @@ Autoclasscss.prototype = {
                 });
         }
 
-        return generateCSS(
-            // Вычисление уровней вложенности тегов и классов
-            generateLevel(
-                getHtmlStructureInfo(this.html)
+        return genCSSSkeleton(
+            getClassLevels(
+                putClassesIntoTags(
+                    getHtmlStructureInfo(this.html)
+                )
             )
         );
     }
