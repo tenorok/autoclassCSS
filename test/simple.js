@@ -1,4 +1,4 @@
-describe("Простые тесты", function() {
+describe('Общие тесты', function() {
 
     var data = [
         [
@@ -10,22 +10,22 @@ describe("Простые тесты", function() {
             '</div>',
 
             '.a {\n' +
-            '	\n' +
+            '    \n' +
             '}\n' +
-            '	.b {\n' +
-            '		\n' +
-            '	}\n' +
-            '		.d {\n' +
-            '			\n' +
-            '		}\n' +
-            '	.c {\n' +
-            '		\n' +
-            '	}'
+            '    .b {\n' +
+            '        \n' +
+            '    }\n' +
+            '        .d {\n' +
+            '            \n' +
+            '        }\n' +
+            '    .c {\n' +
+            '        \n' +
+            '    }'
         ],
         [
             '<header class="header" data-class="fake">' +
                 '<img id="logo" class=" logo">' +
-                '<ul class="menu clearfix">' +
+                '<ul class="menu">' +
                     '<li class="  menu__item ">home</li>' +
                     '<li class="">news</li>' +
                     '<li class="menu__item    menu__item_current_yes">projects</li>' +
@@ -34,20 +34,20 @@ describe("Простые тесты", function() {
             '</header>',
 
             '.header {\n' +
-            '	\n' +
+            '    \n' +
             '}\n' +
-            '	.logo {\n' +
-            '		\n' +
-            '	}\n' +
-            '	.menu {\n' +
-            '		\n' +
-            '	}\n' +
-            '		.menu__item {\n' +
-            '			\n' +
-            '		}\n' +
-            '		.menu__item_current_yes {\n' +
-            '			\n' +
-            '		}'
+            '    .logo {\n' +
+            '        \n' +
+            '    }\n' +
+            '    .menu {\n' +
+            '        \n' +
+            '    }\n' +
+            '        .menu__item {\n' +
+            '            \n' +
+            '        }\n' +
+            '        .menu__item_current_yes {\n' +
+            '            \n' +
+            '        }'
         ],
         [
             '<!DOCTYPE html>' +
@@ -71,48 +71,41 @@ describe("Простые тесты", function() {
             '</html>',
 
             '.i-ua_js_no {\n' +
-            '	\n' +
+            '    \n' +
             '}\n' +
-            '	.i-ua__head {\n' +
-            '		\n' +
-            '	}\n' +
-            '		.i-ua__title {\n' +
-            '			\n' +
-            '		}\n' +
-            '	.b-page__body {\n' +
-            '		\n' +
-            '	}\n' +
-            '	.b-page {\n' +
-            '		\n' +
-            '	}\n' +
-            '		.b-card {\n' +
-            '			\n' +
-            '		}\n' +
-            '		.b-card_lang_ru {\n' +
-            '			\n' +
-            '		}\n' +
-            '			.b-info__title {\n' +
-            '				\n' +
-            '			}\n' +
-            '				.b-info__name {\n' +
-            '					\n' +
-            '				}\n' +
-            '				.b-info__position {\n' +
-            '					\n' +
-            '				}'
+            '    .i-ua__head {\n' +
+            '        \n' +
+            '    }\n' +
+            '        .i-ua__title {\n' +
+            '            \n' +
+            '        }\n' +
+            '    .b-page__body {\n' +
+            '        \n' +
+            '    }\n' +
+            '    .b-page {\n' +
+            '        \n' +
+            '    }\n' +
+            '        .b-card {\n' +
+            '            \n' +
+            '        }\n' +
+            '        .b-card_lang_ru {\n' +
+            '            \n' +
+            '        }\n' +
+            '            .b-info__title {\n' +
+            '                \n' +
+            '            }\n' +
+            '                .b-info__name {\n' +
+            '                    \n' +
+            '                }\n' +
+            '                .b-info__position {\n' +
+            '                    \n' +
+            '                }'
         ]
     ];
 
-    it("contains spec with an expectation", function() {
+    it('Перебор вариантов', function() {
         data.forEach(function(test) {
-            expect(
-                new Autoclasscss(test[0])
-                    .indent('tabs')
-                    .ignore('clearfix')
-//                    .flate(true)
-//                    .inner(false)
-                    .get()
-            ).toBe(test[1]);
+            expect(new Autoclasscss(test[0]).get()).toBe(test[1]);
         });
     });
 });
