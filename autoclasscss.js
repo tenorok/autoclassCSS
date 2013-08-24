@@ -158,6 +158,7 @@ Autoclasscss.prototype = {
          * Колбек вызывается для каждого класса в атрибуте class
          * @callback Autoclasscss~iterateClassesInAttrCallback
          * @param {string} Текущий класс
+         * @param {number} Порядковый номер класса в атрибуте
          */
 
         /**
@@ -170,8 +171,8 @@ Autoclasscss.prototype = {
             // Если атрибут класса пустой
             if(!classAttrContent) return;
 
-            classAttrContent.replace(/\s+/g, ' ').split(' ').forEach(function(cls) {
-                callback.call(this, cls);
+            classAttrContent.replace(/\s+/g, ' ').split(' ').forEach(function(cls, pos) {
+                callback.call(this, cls, pos);
             });
         }
 
@@ -187,10 +188,10 @@ Autoclasscss.prototype = {
             // Перебор всех атрибутов class в html
             iterateSubstr(html, /\s+class\s*=\s*('|")\s*[-A-Za-z0-9_\s*]+\s*('|")/g, function(classAttr) {
 
-                iterateClassesInAttr(getClassAttrContent(classAttr[0]), function(cls) {
+                iterateClassesInAttr(getClassAttrContent(classAttr[0]), function(cls, pos) {
                     classesInfo.push({
                         type: 'class',
-                        position: classAttr.index,
+                        position: classAttr.index + pos, // Для сохранения последовательности классов в атрибуте
                         val: cls
                     });
                 });
