@@ -23,7 +23,8 @@ function Autoclasscss(html) {
     this
         .indent('spaces', 4)
         .flat(false)
-        .inner(true);
+        .inner(true)
+        .tag(false);
 }
 
 /**
@@ -97,6 +98,19 @@ Autoclasscss.prototype = {
      */
     inner: function(state) {
         this.params.inner = state;
+        return this;
+    },
+
+    /**
+     * Указывать тег в селекторе
+     * @param {boolean|string|Array} tag Значение опции можно передавать в разном виде, например:
+     *     true|false - указывать или не указывать все теги
+     *     'div' - указывать тег div
+     *     ['ul', 'li'] - указывать теги ul и li
+     * @returns {this}
+     */
+    tag: function(tag) {
+        this.params.tag = typeof tag === 'string' ? [tag] : tag;
         return this;
     },
 
@@ -285,7 +299,7 @@ Autoclasscss.prototype = {
             tags.forEach(function(tag) {
                 if(tag.type === 'tag-open') {
                     tree.push(tag);
-                    addClasses(tag.classes, tree.length - 1);
+                    addClasses(tag.name, tag.classes, tree.length - 1);
                     tag.single && tree.pop();
                 } else {
                     tree.pop();
@@ -303,10 +317,11 @@ Autoclasscss.prototype = {
 
             /**
              * Добавить класс к выводу
+             * @param {string} tag Имя тега
              * @param {Array} tagClasses Массив классов тега
              * @param {number} level Уровень вложенности тега
              */
-            function addClasses(tagClasses, level) {
+            function addClasses(tag, tagClasses, level) {
 
                 tagClasses.forEach(function(cls) {
 
@@ -314,6 +329,7 @@ Autoclasscss.prototype = {
                     exist.push(cls);
 
                     classes.push({
+                        tag: tag,
                         name: cls,
                         level: level
                     });
@@ -321,6 +337,17 @@ Autoclasscss.prototype = {
             }
 
             return classes;
+        }
+
+        /**
+         * Нужно ли указывать тег в селекторе
+         * @param {string} tag Имя тега
+         * @returns {boolean}
+         */
+        function isOkTag(tag) {
+            var paramsTag = that.params.tag;
+            if(typeof paramsTag === 'boolean') return paramsTag;
+            return !!~paramsTag.indexOf(tag);
         }
 
         /**
@@ -336,9 +363,10 @@ Autoclasscss.prototype = {
 
                 var paramsIndent = that.params.indent,
                     indent = !that.params.flat ? duplicateStr(paramsIndent, cls.level) : '',
-                    innerIndent = that.params.inner ? '\n' + indent + paramsIndent + '\n' + indent : '';
+                    innerIndent = that.params.inner ? '\n' + indent + paramsIndent + '\n' + indent : '',
+                    tag = isOkTag(cls.tag) ? cls.tag : '';
 
-                css.push(indent + '.' + cls.name + ' {' + innerIndent + '}');
+                css.push(indent + tag + '.' + cls.name + ' {' + innerIndent + '}');
             });
 
             return css.join('\n');
