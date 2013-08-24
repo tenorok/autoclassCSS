@@ -20,7 +20,9 @@ function Autoclasscss(html) {
         ignore: []
     };
 
-    this.indent('spaces', 4);
+    this
+        .indent('spaces', 4)
+        .flat(false);
 }
 
 /**
@@ -74,6 +76,16 @@ Autoclasscss.prototype = {
             ? this.params.ignore.push(classes)
             : (this.params.ignore = this.params.ignore.concat(classes));
 
+        return this;
+    },
+
+    /**
+     * Установление плоского или вложенного списка селекторов
+     * @param {boolean} state Плоский или не плоский список
+     * @returns {this}
+     */
+    flat: function(state) {
+        this.params.flat = state;
         return this;
     },
 
@@ -312,7 +324,7 @@ Autoclasscss.prototype = {
             classes.forEach(function(cls) {
 
                 var paramsIndent = that.params.indent,
-                    indent = duplicateStr(paramsIndent, cls.level);
+                    indent = !that.params.flat ? duplicateStr(paramsIndent, cls.level) : '';
 
                 css.push(
                     indent + '.' + cls.name + ' {\n' +
