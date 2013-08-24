@@ -22,7 +22,8 @@ function Autoclasscss(html) {
 
     this
         .indent('spaces', 4)
-        .flat(false);
+        .flat(false)
+        .inner(true);
 }
 
 /**
@@ -86,6 +87,16 @@ Autoclasscss.prototype = {
      */
     flat: function(state) {
         this.params.flat = state;
+        return this;
+    },
+
+    /**
+     * Добавлять или не добавлять отступы внутри фигурных скобок
+     * @param {boolean} state Добавлять или не добавлять
+     * @returns {this}
+     */
+    inner: function(state) {
+        this.params.inner = state;
         return this;
     },
 
@@ -324,13 +335,10 @@ Autoclasscss.prototype = {
             classes.forEach(function(cls) {
 
                 var paramsIndent = that.params.indent,
-                    indent = !that.params.flat ? duplicateStr(paramsIndent, cls.level) : '';
+                    indent = !that.params.flat ? duplicateStr(paramsIndent, cls.level) : '',
+                    innerIndent = that.params.inner ? '\n' + indent + paramsIndent + '\n' + indent : '';
 
-                css.push(
-                    indent + '.' + cls.name + ' {\n' +
-                        indent + paramsIndent + '\n' +
-                    indent + '}'
-                );
+                css.push(indent + '.' + cls.name + ' {' + innerIndent + '}');
             });
 
             return css.join('\n');
