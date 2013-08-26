@@ -24,7 +24,8 @@ function Autoclasscss(html) {
         .indent('spaces', 4)
         .flat(false)
         .inner(true)
-        .tag(false);
+        .tag(false)
+        .brace('default');
 }
 
 /**
@@ -111,6 +112,24 @@ Autoclasscss.prototype = {
      */
     tag: function(tag) {
         this.params.tag = typeof tag === 'string' ? [tag] : tag;
+        return this;
+    },
+
+    /**
+     * Способ отображения открывающей скобки
+     * @param {string} type Способ отображения, принимает одно из следующих значений:
+     *     "default" - через пробел после селектора
+     *     "newline" - на новой строке под селектором
+     * @throws {Error} Неизвестный способ отображения
+     * @returns {this}
+     */
+    brace: function(type) {
+
+        if(!~['default', 'newline'].indexOf(type)) {
+            throw new Error('Unknown brace type: ' + type);
+        }
+
+        this.params.brace = type;
         return this;
     },
 
@@ -351,6 +370,20 @@ Autoclasscss.prototype = {
         }
 
         /**
+         * Получить открывающую скобку
+         * @param {string} indent Сформированный отступ до селектора
+         * @returns {string}
+         */
+        function getBrace(indent) {
+            switch(that.params.brace) {
+                case 'default':
+                    return ' {';
+                case 'newline':
+                    return '\n' + indent + '{';
+            }
+        }
+
+        /**
          * Сформировать CSS-каркас
          * @param {Array} classes Плоский массив классов с указанием их уровня вложенности
          * @returns {string}
@@ -366,7 +399,7 @@ Autoclasscss.prototype = {
                     innerIndent = that.params.inner ? '\n' + indent + paramsIndent + '\n' + indent : '',
                     tag = isOkTag(cls.tag) ? cls.tag : '';
 
-                css.push(indent + tag + '.' + cls.name + ' {' + innerIndent + '}');
+                css.push(indent + tag + '.' + cls.name + getBrace(indent) + innerIndent + '}');
             });
 
             return css.join('\n');
