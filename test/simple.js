@@ -100,6 +100,49 @@ describe('Общие тесты', function() {
             '                .b-info__position {\n' +
             '                    \n' +
             '                }'
+        ],
+        [
+            '<!DOCTYPE html>' +
+            '<html class="i-ua_js_no">' +
+                '<head class="i-ua__head">' +
+                    '<meta http-equiv="content-type" content="text/html; charset=utf-8"/>' +
+                    '<title class="i-ua__title">Артём Курбатов — tenorok@yandex-team.ru</title>' +
+                    '<link rel="shortcut icon" href="favicon.ico"/>' +
+                    '<link rel="stylesheet" href="/pages/tenorok/tenorok.css"/>' +
+                    '<!--[if lte IE 7]><link rel="stylesheet" href="/pages/tenorok/tenorok.ie.css"/><![endif]-->' +
+                    '<script src="/pages/tenorok/tenorok.js"></script>' +
+                '</head>' +
+                '<body>' +
+                    '<div class="b-card b-card_lang_ru" onclick="return {&quot;b-card&quot;:{}}">' +
+                        '<div>' +
+                            '<h1 class="b-info__name">Артём Курбатов</h1>' +
+                            '<strong class="b-info__position">Разработчик интерфейсов</strong>' +
+                        '</div>' +
+                    '</div>' +
+                '</body>' +
+            '</html>',
+
+            '.i-ua_js_no {\n' +
+            '    \n' +
+            '}\n' +
+            '    .i-ua__head {\n' +
+            '        \n' +
+            '    }\n' +
+            '        .i-ua__title {\n' +
+            '            \n' +
+            '        }\n' +
+            '    .b-card {\n' +
+            '        \n' +
+            '    }\n' +
+            '    .b-card_lang_ru {\n' +
+            '        \n' +
+            '    }\n' +
+            '        .b-info__name {\n' +
+            '            \n' +
+            '        }\n' +
+            '        .b-info__position {\n' +
+            '            \n' +
+            '        }'
         ]
     ];
 

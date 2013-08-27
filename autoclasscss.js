@@ -330,12 +330,27 @@ Autoclasscss.prototype = {
             tags.forEach(function(tag) {
                 if(tag.type === 'tag-open') {
                     tree.push(tag);
-                    addClasses(tag.name, tag.classes, tree.length - 1);
+                    addClasses(tag.name, tag.classes, getTagsWithClassesCount());
                     tag.single && tree.pop();
                 } else {
                     tree.pop();
                 }
             });
+
+            /**
+             * Получить текущее количество тегов с классами
+             * @returns {number}
+             */
+            function getTagsWithClassesCount() {
+
+                var count = -1;
+
+                tree.forEach(function(tag) {
+                    tag.classes.length > 0 && count++;
+                });
+
+                return count;
+            }
 
             /**
              * Нужно ли добавлять класс в вывод
