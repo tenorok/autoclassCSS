@@ -25,7 +25,8 @@ function Autoclasscss(html) {
         .flat(false)
         .inner(true)
         .tag(false)
-        .brace('default');
+        .brace('default')
+        .line(false);
 }
 
 /**
@@ -130,6 +131,17 @@ Autoclasscss.prototype = {
         }
 
         this.params.brace = type;
+        return this;
+    },
+
+    /**
+     * Отбивать селекторы пустой строкой
+     * @param {boolean} state Отбивать или не отбивать
+     * @param {number} [count=1] Количество строк для отбива
+     * @returns {this}
+     */
+    line: function(state, count) {
+        this.params.line = state ? duplicateStr('\n', count || 1) : '';
         return this;
     },
 
@@ -402,7 +414,7 @@ Autoclasscss.prototype = {
                 css.push(indent + tag + '.' + cls.name + getBrace(indent) + innerIndent + '}');
             });
 
-            return css.join('\n');
+            return css.join('\n' + that.params.line);
         }
 
         /**
