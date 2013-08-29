@@ -10,11 +10,11 @@
 /**
  * Конструктор
  * @constructor
- * @param {string} html HTML-разметка
+ * @param {string} [html] HTML-разметка
  */
 function Autoclasscss(html) {
 
-    this.html = html;
+    this.html = html || '';
 
     this.params = {
         ignore: []
@@ -142,6 +142,16 @@ Autoclasscss.prototype = {
      */
     line: function(state, count) {
         this.params.line = state ? duplicateStr('\n', count || 1) : '';
+        return this;
+    },
+
+    /**
+     * Установить HTML-разметку
+     * @param {string} html HTML-разметка
+     * @returns {this}
+     */
+    set: function(html) {
+        this.html = html;
         return this;
     },
 
