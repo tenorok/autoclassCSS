@@ -1,7 +1,7 @@
 $(function() {
 
-    $('.html-area').keyup(function () {
-        $('.css-area').val(autoclasscss($(this).val()));
+    $('.area_type_html').keyup(function () {
+        $('.area_type_css').val(new Autoclasscss($(this).val()).get());
     });
 
 });

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>AutoclassCSS</title>
+        <title>AutoclassCSS — Генератор CSS-каркаса</title>
         <link rel="stylesheet" href="../../bower_components/normalize-css/normalize.css">
         <script src="../../bower_components/jquery/jquery.min.js"></script>
         <script src="../../autoclasscss.js"></script>
@@ -11,14 +11,64 @@
     </head>
     <body>
         <div class="page">
+            <h1 class="header">AutoclassCSS — Генератор CSS-каркаса</h1>
+            <div class="info">
+                <div class="about">
+                    <p class="about__p"><a href="https://github.com/tenorok/autoclasscss" class="about__a">AutoclassCSS</a> — это инструмент для формирования каркаса CSS-классов на основе HTML-разметки.<br>Оформление каркаса настраивается по вкусу, благодаря удобному API.</p>
+                    <p class="about__p">На этой странице можно быстро попробовать AutoclassCSS в действии.</p>
+                </div>
+                <a class="download" href="">
+                    <div class="download__text">Скачать v0.0.1</div>
+                </a>
+            </div>
+            <div class="settings-panel">
+                <ul class="settings">
+                    <li class="settings__item">
+                        <select class="select opt-indent">
+                            <option value="spaces">отступ пробелами</option>
+                            <option value="tabs">отступ табами</option>
+                        </select>
+                        <input type="number" value="4" class="input input_size_s opt-indent-size">
+                    </li>
+                    <li class="settings__item">
+                        <select class="select opt-brace">
+                            <option value="default">скобка рядом с селектором</option>
+                            <option value="newline">скобка под селектором</option>
+                        </select>
+                    </li>
+                </ul>
+                <ul class="settings">
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-flat"> плоский список</label>
+                    </li>
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-line"> отбивать пустой строкой</label>
+                        <input type="number" value="1" class="input input_size_s opt-line-size">
+                    </li>
+                </ul>
+                <ul class="settings">
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-tag"> указывать тег</label>
+                    </li>
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-inner"> отступ внутри скобок</label>
+                    </li>
+                </ul>
+                <ul class="settings">
+                    <li class="settings__item">
+                        <input type="text" placeholder="class1, class2, class3" class="input input_size_l opt-ignore"> — игнорируемые классы
+                    </li>
+                </ul>
+            </div>
             <div class="html-block">
-                <h1 class="title">Please, insert HTML</h1>
-                <textarea class="html-area" autofocus></textarea>
+                <h2 class="title">Вставьте сюда HTML</h2>
+                <textarea class="area area_type_html" autofocus></textarea>
             </div>
             <div class="css-block">
-                <h1 class="title">AutoclassCSS</h1>
-                <textarea class="css-area"></textarea>
+                <h2 class="title">Скопируйте сформированный CSS-каркас</h2>
+                <textarea class="area area_type_css"></textarea>
             </div>
         </div>
+        <a href="https://github.com/tenorok/autoclasscss"><img style="position: absolute; top: 0; right: 0; border: 0; width: 149px; height: 149px;" src="http://aral.github.com/fork-me-on-github-retina-ribbons/right-orange@2x.png" alt="Fork me on GitHub"></a>
     </body>
 </html>
