@@ -3,7 +3,9 @@ describe('Тестирование опции: ignore', function() {
     var html =
             '<div class="a i i2">' +
                 '<div class="b i2">' +
-                    '<div class="d i"></div>' +
+                    '<div class="i4">' +
+                        '<div class="d"></div>' +
+                    '</div>' +
                 '</div>' +
                 '<div class="c i3"></div>' +
             '</div>',
@@ -21,9 +23,12 @@ describe('Тестирование опции: ignore', function() {
             '    .b {\n' +
             '        \n' +
             '    }\n' +
-            '        .d {\n' +
+            '        .i4 {\n' +
             '            \n' +
             '        }\n' +
+            '            .d {\n' +
+            '                \n' +
+            '            }\n' +
             '    .c {\n' +
             '        \n' +
             '    }\n' +
@@ -33,7 +38,7 @@ describe('Тестирование опции: ignore', function() {
 
         data = [
             [
-                'i',
+                ['a', 'i'],
 
                 '.a {\n' +
                 '    \n' +
@@ -44,9 +49,12 @@ describe('Тестирование опции: ignore', function() {
                 '    .b {\n' +
                 '        \n' +
                 '    }\n' +
-                '        .d {\n' +
+                '        .i4 {\n' +
                 '            \n' +
                 '        }\n' +
+                '            .d {\n' +
+                '                \n' +
+                '            }\n' +
                 '    .c {\n' +
                 '        \n' +
                 '    }\n' +
@@ -55,7 +63,10 @@ describe('Тестирование опции: ignore', function() {
                 '    }'
             ],
             [
-                ['i', 'i2', 'i3'],
+                [
+                    ['i', 'i2'],
+                    ['i', 'i2', 'i3', 'i4']
+                ],
 
                 '.a {\n' +
                 '    \n' +
@@ -80,7 +91,9 @@ describe('Тестирование опции: ignore', function() {
         data.forEach(function(test) {
             expect(
                 new Autoclasscss(html)
-                    .ignore(test[0])
+                    .ignore(test[0][0])
+                    .ignore(false)
+                    .ignore(test[0][1])
                     .get()
             ).toBe(test[1]);
         });

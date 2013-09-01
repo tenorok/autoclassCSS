@@ -71,16 +71,25 @@ Autoclasscss.prototype = {
 
     /**
      * Добавление игнорируемых классов
-     * @param {string|Array} classes Класс или массив классов
+     * @param {string|Array|boolean} classes Класс, массив классов или false для отмены игнорирования
      * @returns {this}
      */
     ignore: function(classes) {
 
-        typeof classes === 'string'
-            ? this.params.ignore.push(classes)
-            : (this.params.ignore = this.params.ignore.concat(classes));
+        switch(typeof classes) {
 
-        return this;
+            case 'string':
+                this.params.ignore.push(classes);
+                return this;
+
+            case 'object':
+                this.params.ignore = this.params.ignore.concat(classes);
+                return this;
+
+            case 'boolean':
+                this.params.ignore = [];
+                return this;
+        }
     },
 
     /**
@@ -313,7 +322,7 @@ Autoclasscss.prototype = {
                         break;
 
                     case 'class':
-                        tags[tags.length - 1].classes.push(element.val);
+                        ~that.params.ignore.indexOf(element.val) || tags[tags.length - 1].classes.push(element.val);
                         break;
 
                     case 'tag-close':
@@ -363,15 +372,6 @@ Autoclasscss.prototype = {
             }
 
             /**
-             * Нужно ли добавлять класс в вывод
-             * @param {string} cls Класс
-             * @returns {boolean}
-             */
-            function isOkClass(cls) {
-                return !~exist.indexOf(cls) && !~that.params.ignore.indexOf(cls);
-            }
-
-            /**
              * Добавить класс к выводу
              * @param {string} tag Имя тега
              * @param {Array} tagClasses Массив классов тега
@@ -381,7 +381,7 @@ Autoclasscss.prototype = {
 
                 tagClasses.forEach(function(cls) {
 
-                    if(!isOkClass(cls)) return;
+                    if(~exist.indexOf(cls)) return;
                     exist.push(cls);
 
                     classes.push({
