@@ -145,55 +145,77 @@ Demo.prototype = {
      * @returns {this}
      */
     bindOptionsEvents: function() {
-        this.opt.indentType.change(this.bindIndentType.bind(this));
-        this.opt.indentSize.change(this.bindIndentSize.bind(this));
-        this.opt.flat.change(this.bindFlat.bind(this));
-        this.opt.inner.change(this.bindInner.bind(this));
-        this.opt.tag.change(this.bindTag.bind(this));
-        this.opt.brace.change(this.bindBrace.bind(this));
-        this.opt.lineState.change(this.bindLineState.bind(this));
-        this.opt.lineSize.change(this.bindLineSize.bind(this));
+        this.bindOptions([
+            [this.opt.indentType, this.bindIndentType],
+            [this.opt.indentSize, this.bindIndentSize],
+            [this.opt.ignore, this.bindIgnore, 'keyup'],
+            [this.opt.flat, this.bindFlat],
+            [this.opt.inner, this.bindInner],
+            [this.opt.tag, this.bindTag],
+            [this.opt.brace, this.bindBrace],
+            [this.opt.lineState, this.bindLineState],
+            [this.opt.lineSize, this.bindLineSize]
+        ]);
+        return this;
+    },
+
+    /**
+     * Массив опций и их колбеков
+     * @typedef {Array} Demo~DemoOptionsEvents
+     * @property {jQuery} 0 - DOM-элемент опции
+     * @property {Function} 1 - Колбек на событие
+     * @property {string} [2=change] - Событие на DOM-элементе для выполнения колбека
+     */
+
+    /**
+     * Установить колбек для каждой опции
+     * @param {Demo~DemoOptionsEvents} options Массив опций и их колбеков
+     */
+    bindOptions: function(options) {
+        var that = this;
+        options.forEach(function(opt) {
+            opt[0].on(opt[2] || 'change', function(event) {
+                opt[1].call(that, event);
+                that.cssVal();
+            });
+        });
     },
 
     bindIndentType: function(event) {
         this.autoclasscss.indent(event.target.value, +this.opt.indentSize.val());
-        this.cssVal();
     },
 
     bindIndentSize: function(event) {
         this.autoclasscss.indent(this.opt.indentType.val(), +event.target.value);
-        this.cssVal();
+    },
+
+    bindIgnore: function(event) {
+        this.autoclasscss.ignore(false).ignore(event.target.value.split(',').map(function(e) { return $.trim(e); }));
     },
 
     bindFlat: function(event) {
         this.autoclasscss.flat(event.target.checked);
-        this.cssVal();
     },
 
     bindInner: function(event) {
         this.autoclasscss.inner(event.target.checked);
-        this.cssVal();
     },
 
     bindTag: function(event) {
         this.autoclasscss.tag(event.target.checked);
-        this.cssVal();
     },
 
     bindBrace: function(event) {
         this.autoclasscss.brace(event.target.value);
-        this.cssVal();
     },
 
     bindLineState: function(event) {
         var state = event.target.checked;
         this.opt.lineSize.css('visibility', state ? 'visible' : 'hidden');
         this.autoclasscss.line(state, +this.opt.lineSize.val());
-        this.cssVal();
     },
 
     bindLineSize: function(event) {
         this.autoclasscss.line(this.opt.lineState.is(':checked'), +event.target.value);
-        this.cssVal();
     }
 };
