@@ -56,6 +56,8 @@ body {
             -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
                -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
                     box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
+
+            line-height: 22px;
         }
         .download:after {
             position: absolute;
@@ -99,7 +101,7 @@ body {
             }
             .download__text:after {
                 position: absolute;
-                top: 5px;
+                top: 8px;
                 left: 12px;
 
                 content: "\e134";
@@ -120,7 +122,7 @@ body {
                 padding-bottom: 9px;
             }
             .download:active .download__text:after {
-                top: 6px;
+                top: 9px;
             }
         .about {
             display: inline-block;
