@@ -5,6 +5,7 @@
         <title>AutoclassCSS — Генератор CSS-каркаса</title>
         <link rel="stylesheet" href="../../bower_components/normalize-css/normalize.css">
         <script src="../../bower_components/jquery/jquery.min.js"></script>
+        <script src="../../bower_components/ace/src-min/ace.js"></script>
         <script src="../../autoclasscss.js"></script>
         <link rel="stylesheet" href="index.css">
         <script src="index.js"></script>
@@ -62,11 +63,11 @@
             </div>
             <div class="html-block">
                 <h2 class="title">Вставьте сюда HTML</h2>
-                <textarea class="area area_type_html" autofocus></textarea>
+                <div class="area area_type_html" id="html-editable"></div>
             </div>
             <div class="css-block">
                 <h2 class="title">Скопируйте сформированный CSS-каркас</h2>
-                <textarea class="area area_type_css"></textarea>
+                <pre class="area area_type_css" contenteditable></pre>
             </div>
         </div>
         <a href="https://github.com/tenorok/autoclasscss"><img style="position: absolute; top: 0; right: 0; border: 0; width: 149px; height: 149px;" src="http://aral.github.com/fork-me-on-github-retina-ribbons/right-orange@2x.png" alt="Fork me on GitHub"></a>

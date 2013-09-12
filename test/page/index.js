@@ -75,6 +75,10 @@ function Demo(htmlArea, cssArea, options) {
         lineSize: options.lineSize
     });
 
+    this.editor = ace.edit('html-editable');
+    this.editor.setTheme('ace/theme/tomorrow_night_eighties');
+    this.editor.getSession().setMode('ace/mode/html');
+
     this.bindOptionsEvents();
 }
 
@@ -95,7 +99,8 @@ Demo.prototype = {
      * @returns {this}
      */
     setHtmlArea: function(html) {
-        this.area.html.val(html);
+        this.editor.setValue(html, -1);
+        this.editor.focus();
         return this;
     },
 
@@ -105,7 +110,7 @@ Demo.prototype = {
      * @returns {this}
      */
     setCssArea: function(css) {
-        this.area.css.val(css);
+        this.area.css.html(css);
         return this;
     },
 
@@ -115,7 +120,7 @@ Demo.prototype = {
      * @returns {this|string}
      */
     htmlVal: function(html) {
-        if(!html) return this.area.html.val();
+        if(!html) return this.editor.getValue();
 
         this.autoclasscss.set(html);
         this.setHtmlArea(html);

@@ -236,15 +236,22 @@ body {
         margin-left: 2%;
     }
         .area {
-            width: 96%;
-            height: 200px;
-            padding: 10px 2%;
+            overflow: auto;
 
-            color: #d9bf8c;
+            width: 96%;
+            height: 260px;
+
+            color: #99CC99;
             border: 1px dashed #aaa;
-            background: #191919;
+            background: #2D2D2D;
 
             font: 14px Courier, monospace;
+        }
+        .area_type_css::selection {
+            background: #aaa;
+        }
+        .area_type_css::-moz-selection {
+            background: #515151;
         }
 
 .opt-line-size {

@@ -15,6 +15,7 @@
     "devDependencies": {
         "jquery": "*",
         "normalize-css": "*",
-        "jasmine": "*"
+        "jasmine": "*",
+        "ace": "git@github.com:ajaxorg/ace-builds.git"
     }
 }
