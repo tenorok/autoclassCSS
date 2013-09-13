@@ -1,338 +1,499 @@
-﻿// Copyright (c) 2011 Артём Курбатов | MIT License
+﻿/**
+ * @file AutoclassCSS - Generator CSS skeleton {@link https://github.com/tenorok/autoclassCSS}
+ * @copyright 2012–2013 Artem Kurbatov, tenorok.ru
+ * @license MIT license
+ * @version 0.0.1
+ */
 
-$(document).ready(function() {
-	
-	// Событие срабатывает при отпускании клавиши на клавиатуре в текстовом поле для HTML-кода
-    $('#html-code').keyup(function () {
-	
-		var html = $(this).val();						// Полученный HTML-код
-				
-		// Отображение итогового результата
-		$('#css-code').val(
-			// Формирование CSS-каркаса
-			generateCSS(
-				// Вычисление уровней вложенности тегов и классов
-				generateLevel(
-					// Парсинг html-разметки и формирование массива классов
-					searchOpenTags(html)				// К массиву с данными об открывающихся тегах
-					.concat(searchCloseTags(html))		// Конкатенируется массив с данными о закрывающихся тегах
-					.concat(searchClasses(html))		// Конкатенируется массив с данными о классах
-					.sort(function(a, b) {				// И полученный суммарный массив сортируется по возрастанию позиции вхождения элемента в html-строку
-						return a.position - b.position;
-					})
-				)
-			)
-		)
-	});
-	
-	// Начало
-	// - Функции для парсинга HTML
-	
-			// Поиск открывающих тегов
-			function searchOpenTags(str) {
-		
-				var bracket = new Array();
-		
-				var pattern = /<[-A-Za-z0-9_]+/i; // Открывающие теги
-		
-				var pos = str.search(pattern);
-				var old_pos = pos;
-		
-				for(var count = 0; pos != -1; count++) {
-					
-					var val = str.match(pattern);
-					
-					bracket[count] = new Array();
-					bracket[count]['dtype'] = 'open_tag';
-					bracket[count]['position'] = old_pos;
-					bracket[count]['name'] = val[0].substr(1);
-					
-					str = str.substr(pos + 1);
-					pos = str.search(pattern);
-			
-					if(pos >= 0) {
-						old_pos += pos + 1;
-					}
-				}
-				
-				return bracket;
-			}
-	
-			// Поиск закрывающих тегов
-			function searchCloseTags(str) {
-		
-				var bracket = new Array();
-		
-				var pattern = '</';
-		
-				var pos = str.indexOf(pattern);
-		
-				for(var count = 0; pos != -1; count++) {
-			
-					bracket[count] = new Array();
-					bracket[count]['dtype'] = 'close_tag';
-					bracket[count]['position'] = pos;
-			
-					pos = str.indexOf(pattern, pos + pattern.length);
-				}
-				
-				return bracket;
-			}
-    
-			// Поиск классов
-			function searchClasses(str) {
-		
-				var bracket = new Array();
-		
-				var pattern = /class\s*=\s*('|")\s*[-A-Za-z0-9_\s*]+\s*('|")/i; // Класс (с учётом возможности пробелов по бокам равенства и пробелов вокруг классов в кавычках)
-		
-				var pos = str.search(pattern);
-				var old_pos = pos;
-				var old_pos2 = -1;
-		
-				for(var count = 0; pos != -1; count++) {
-					
-					var cls = str.match(pattern)[0]
-								 .match(/('|")[\s*-A-Za-z0-9_\s*]+('|")/i)[0]
-								 .replace(/\s*('|")\s*/g, '');                  // class="всё_что_находится_здесь"
-					
-					// Если в кавычках указан хотя бы один класс
-					if(cls) {
-						
-						// Если в кавычках указано несколько классов, то их надо разбить по одному
-						var res = 	cls
-									.replace(/\s+/g, ' ')
-									.split(' ');
+(function(window) {
 
-						for(var c = 0; c < res.length; c++) {
-							bracket[count] = new Array();
-							bracket[count]['dtype'] = 'class';
-							bracket[count]['position'] = pos;
-							bracket[count]['val'] = res[c];
-							count++;
-						}
-						count--;
-					}
-					else
-						count--;
-			
-					str = str.substr(pos - old_pos2);
-			
-					pos = str.search(pattern);
-			
-					if(pos >= 0) {
-						pos += old_pos + 1;
-						old_pos2 = old_pos;
-						old_pos += pos - old_pos2;
-					}
-				
-				}
-				
-				return bracket;
-			}
-	// Функции для парсинга HTML -
-	// Конец
-	
-	// Начало
-	// - Функции вычисления вложенности классов
-	
-			function generateLevel(arr) {
-				
-				return classesLevel(
-					reformateArr(arr)
-				);
-			}
-			
-			/* Составление единого массива в формате: (на основании одноуровневого массива, склееного в порядке следования открывающих тегов, классов и закрывающих тегов)
-				Array
-				(
-					[0] => Array
-					(
-						[dtype] => open_tag
-						[name] => div
-						[single] => false
-						[classes] => Array
-							(
-								[0] => class_name_0
-								[1] => class_name_1
-								...
-							)
-					)
-					[1] => Array
-					(
-						[dtype] => close_tag
-					)
-					...
-				)
-			*/
-			function reformateArr(arr) {
-				
-				var tree = new Array();
-				var iterate = -1;
-				var cls;
-				var singleTags = ['!doctype', 'base', 'br', 'frame', 'hr', 'img', 'input', 'link', 'meta'];
-				
-				for(e in arr) {
-					
-					switch(arr[e]['dtype']) {
-						
-						case 'open_tag':
-							tree[++iterate] = new Array();
-							tree[iterate]['dtype'] = 'open_tag';
-							tree[iterate]['name'] = arr[e]['name'];
-							
-							if($.inArray(arr[e]['name'], singleTags) >= 0)
-								tree[iterate]['single'] = true;
-							else
-								tree[iterate]['single'] = false;
-							
-							tree[iterate]['level'] = null;
-							
-							tree[iterate]['classes'] = new Array();
-							cls = -1;
-							break;
-						
-						case 'class':
-							tree[iterate]['classes'][++cls] = new Array();
-							tree[iterate]['classes'][cls] = arr[e]['val'];
-							break;
-						
-						case 'close_tag':
-							tree[++iterate] = new Array();
-							tree[iterate]['dtype'] = 'close_tag';
-							break;
-					}
-				}
-				
-				return tree;
-			}
+/**
+ * Конструктор
+ * @constructor
+ * @name Autoclasscss
+ * @param {string} [html] HTML-разметка
+ */
+function Autoclasscss(html) {
 
-			/* Составление массива классов в формате:
-				Array
-				(
-					[0] => Array
-						(
-							[name] => class_name_0
-							[level] => 0
-						)
-					[1] => Array
-						(
-							[name] => class_name_1
-							[level] => 1
-						)
-					...
-				)
-			*/
-			function classesLevel(arr) {
-				
-				var classes = new Array();													// Массив для ретурна
-				var tree = new Array();														// Массив для отслеживания дерева
-				var repete = new Array();													// Массив для отслеживания повторов классов
-				var iterate = -1;
-				
-				for(e in arr) {																// Цикл по массиву, составленному функцией reformateArr()
+    this.html = html || '';
 
-					switch(arr[e]['dtype']) {
+    this.params = {
+        ignore: []
+    };
 
-						case 'open_tag':													// Если текущий элемент является открывающим тегом
-							
-							tree.push(arr[e]);												// Тег открылся, значит надо добавить его в дерево
-							
-							var level = -1;
-							
-							for(t in tree) {												// Цикл по тегам дерева
-								
-								if(tree[t]['classes'].length > 0) {							// Если у тега есть хотя бы один класс
-									
-									// Начало - Высчитывание level
-									if(tree[t]['level'] == null) {							// Если к этому тегу идёт первое обращение
-										
-										for(c in tree[t]['classes']) {						// Цикл по классам текущего тега
-										
-											var class_name = tree[t]['classes'][c];			// Для удобства имя класса перегоняется в отдельную переменную
-											
-											if($.inArray(class_name, repete) < 0) {			// Если в массиве уже добавленных ранее классов нет текущего класса тега
-												
-												level++;									// Прибавление уровня вложенности на единицу
-												break;										// и выход из цикла
-											}
-										}
-									}
-									else													// Иначе к этому тегу идёт не первое обращение
-										level = tree[t]['level'];							// и у него уже задан уровень, остаётся только его переприсвоить
-									// Конец  - Высчитывание level
-									
-									addClass(tree[t]['classes'], false);					// Добавление в массив классов всех необходимых классов текущего тега
-									
-									if(tree[t]['name'] == 'ul' || tree[t]['name'] == 'ol')	// Если текущий тег называется ul или ol
-										addClass(tree[t]['classes'], 'li');					// то для его элементов так же добавляется блок стилей
-									
-									tree[t]['level'] = level;								// Сохранение высчитанного уровня для тега
-								}
-							}
-							
-							if(arr[e]['single'])											// Если тег одиночный, то он не участвует в иерархическом дереве
-								tree.pop();													// и его надо удалить
-							
-							break;															// Выход из case
-						
-						case 'close_tag':													// Если текущий элемент является закрывающим тегом
-							
-							tree.pop();														// Если тег закрылся, то нужно удалить его из дерева
-							
-							break;															// Выход из case
-					}
-				}
-				
-				// Функция добавления элемента в массив классов, который затем будет выведен
-				function addClass(tagClss, mode) {											// В качестве первого параметра принимается массив классов текущего тега
-					
-					var addLevel = 0;														// Переменная для задания дополнительного уровня вложенности без влияния на общую иерархию вложенности
-					
-					for(c in tagClss) {														// Цикл по классам тега
-											
-						var class_name = tagClss[c];										// Для удобства имя класса перегоняется в отдельную переменную
-						
-						if(class_name != 'clearfix') {										// Если текущий класс не называется clearfix
-							
-							if(mode == 'li') {												// Если текущий модификатор предусматривает подготовку стилей для li
-								
-								class_name += ' li';										// то в конец имени класса добавляется li
-								addLevel = 1;												// и для этого блока увеличивается уровень вложенности относительно текущего уровня на единицу
-							}
-							
-							if($.inArray(class_name, repete) < 0) {							// Если в массиве уже добавленных ранее классов нет текущего класса тега
-								
-								classes[++iterate] = new Array();							// Создание подмассива для класса в массиве классов
-								classes[iterate]['name'] = class_name;						// Добавление имени класса в подмассив
-								classes[iterate]['level'] = level + addLevel;				// Добавление уровня вложенности класса в подмассив
-							}
-							
-							repete.push(class_name);										// Добавление текущего класса в массив для отслеживания повторов
-						}
-					}
-				}
-				
-				return classes;																// Возврат конечного сформированного массива, готового к выводу
-			}
-			
-	// Функции вычисления вложенности тегов и классов
-	// Конец
-	
-	// Формирование строки каркаса CSS для дальнейшего вывода
-	function generateCSS(classes) {
-		
-		var css  = '';			 // Текст CSS
-		
-		for(c in classes) {
-			
-			var tabs = '';
-			for(l = 0; l < classes[c]['level']; l++)
-				tabs += '	';
-			
-			css += tabs + '.' + classes[c]['name'] + ' {\n' + tabs + '	\n' + tabs + '}\n';
-		}
-		
-		return css;
-	}
-});
+    this
+        .indent('spaces', 4)
+        .flat(false)
+        .inner(true)
+        .tag(false)
+        .brace('default')
+        .line(false);
+}
+
+/**
+ * Продублировать строку
+ * @private
+ * @param {string} string Строка
+ * @param {number} count Количество дублирований
+ * @returns {string}
+ */
+function duplicateStr(string, count) {
+    return new Array(count + 1).join(string);
+}
+
+Autoclasscss.prototype = {
+
+    /**
+     * Настройка отступов
+     * @memberof Autoclasscss#
+     * @param {string} type Тип отступов, принимает одно из следующих значений:
+     *     "tabs" - табы
+     *     "spaces" - пробелы
+     * @param {number} [count=1] Количество символов в одном отступе
+     * @throws {Error} Неизвестный тип отступов
+     * @returns {this}
+     */
+    indent: function(type, count) {
+
+        count = count || 1;
+
+        var indents = {
+                tabs: '\t',
+                spaces: ' '
+            },
+            indentStr = indents[type];
+
+        if(!indentStr) {
+            throw new Error('Unknown indent type: ' + type);
+        }
+
+        this.params.indent = duplicateStr(indentStr, count);
+
+        return this;
+    },
+
+    /**
+     * Добавление игнорируемых классов
+     * @memberof Autoclasscss#
+     * @param {string|Array|boolean} classes Класс, массив классов или false для отмены игнорирования
+     * @returns {this}
+     */
+    ignore: function(classes) {
+
+        switch(typeof classes) {
+
+            case 'string':
+                this.params.ignore.push(classes);
+                return this;
+
+            case 'object':
+                this.params.ignore = this.params.ignore.concat(classes);
+                return this;
+
+            case 'boolean':
+                this.params.ignore = [];
+                return this;
+        }
+    },
+
+    /**
+     * Установление плоского или вложенного списка селекторов
+     * @memberof Autoclasscss#
+     * @param {boolean} state Плоский или не плоский список
+     * @returns {this}
+     */
+    flat: function(state) {
+        this.params.flat = state;
+        return this;
+    },
+
+    /**
+     * Добавлять или не добавлять отступы внутри фигурных скобок
+     * @memberof Autoclasscss#
+     * @param {boolean} state Добавлять или не добавлять
+     * @returns {this}
+     */
+    inner: function(state) {
+        this.params.inner = state;
+        return this;
+    },
+
+    /**
+     * Указывать тег в селекторе
+     * @memberof Autoclasscss#
+     * @param {boolean|string|Array} tag Значение опции можно передавать в разном виде, например:
+     *     true|false - указывать или не указывать все теги
+     *     'div' - указывать тег div
+     *     ['ul', 'li'] - указывать теги ul и li
+     * @returns {this}
+     */
+    tag: function(tag) {
+        this.params.tag = typeof tag === 'string' ? [tag] : tag;
+        return this;
+    },
+
+    /**
+     * Способ отображения открывающей скобки
+     * @memberof Autoclasscss#
+     * @param {string} type Способ отображения, принимает одно из следующих значений:
+     *     "default" - через пробел после селектора
+     *     "newline" - на новой строке под селектором
+     * @throws {Error} Неизвестный способ отображения
+     * @returns {this}
+     */
+    brace: function(type) {
+
+        if(!~['default', 'newline'].indexOf(type)) {
+            throw new Error('Unknown brace type: ' + type);
+        }
+
+        this.params.brace = type;
+        return this;
+    },
+
+    /**
+     * Отбивать селекторы пустой строкой
+     * @memberof Autoclasscss#
+     * @param {boolean} state Отбивать или не отбивать
+     * @param {number} [count=1] Количество строк для отбива
+     * @returns {this}
+     */
+    line: function(state, count) {
+        this.params.line = state ? duplicateStr('\n', count || 1) : '';
+        return this;
+    },
+
+    /**
+     * Установить HTML-разметку
+     * @memberof Autoclasscss#
+     * @param {string} html HTML-разметка
+     * @returns {this}
+     */
+    set: function(html) {
+        this.html = html;
+        return this;
+    },
+
+    /**
+     * Получить CSS-каркас
+     * @memberof Autoclasscss#
+     * @returns {string} CSS-каркас
+     */
+    get: function() {
+
+        var that = this;
+
+        /**
+         * Колбек вызывается для каждого вхождения подстроки в строку
+         * @private
+         * @callback Autoclasscss~iterateSubstrCallback
+         * @param {Object} match Информация о текущем вхождении
+         */
+
+        /**
+         * Проитерироваться по всем вхождениям подстроки в строку
+         * @private
+         * @param {string} string Исходная строка
+         * @param {RegExp} regexp Регулярное выражения для поиска подстроки
+         * @param {Autoclasscss~iterateSubstrCallback} callback Колбек будет вызван для каждого вхождения
+         */
+        function iterateSubstr(string, regexp, callback) {
+
+            var match;
+
+            while((match = regexp.exec(string)) != null) {
+                callback.call(this, match);
+            }
+        }
+
+        /**
+         * Получить информационный массив по всем открывающим тегам в HTML
+         * @private
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function searchOpenTags(html) {
+
+            var openTagsInfo = [];
+
+            iterateSubstr(html, /<[-A-Za-z0-9_]+/g, function(openTag) {
+                openTagsInfo.push({
+                    type: 'tag-open',
+                    position: openTag.index,
+                    name: openTag[0].substr(1)
+                });
+            });
+
+            return openTagsInfo;
+        }
+
+        /**
+         * Получить информационный массив по всем закрывающим тегам в HTML
+         * @private
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function searchCloseTags(html) {
+
+            var closeTagsInfo = [];
+
+            iterateSubstr(html, /<\//g, function(closeTag) {
+                closeTagsInfo.push({
+                    type: 'tag-close',
+                    position: closeTag.index
+                });
+            });
+
+            return closeTagsInfo;
+        }
+
+        /**
+         * Получить содержимое атрибута class
+         * @private
+         * @param {string} classAttr Вырванный из HTML кусок с атрибутом class
+         * @returns {string}
+         */
+        function getClassAttrContent(classAttr) {
+            return classAttr.match(/('|")[\s*-A-Za-z0-9_\s*]+('|")/i)[0].replace(/\s*('|")\s*/g, '');
+        }
+
+        /**
+         * Колбек вызывается для каждого класса в атрибуте class
+         * @private
+         * @callback Autoclasscss~iterateClassesInAttrCallback
+         * @param {string} cls Текущий класс
+         * @param {number} pos Порядковый номер класса в атрибуте
+         */
+
+        /**
+         * Проитерироваться по классам в атрибуте class
+         * @private
+         * @param {string} classAttrContent Содержимое атрибута class
+         * @param {Autoclasscss~iterateClassesInAttrCallback} callback Колбек будет вызван для каждого класса
+         */
+        function iterateClassesInAttr(classAttrContent, callback) {
+
+            // Если атрибут класса пустой
+            if(!classAttrContent) return;
+
+            classAttrContent.replace(/\s+/g, ' ').split(' ').forEach(function(cls, pos) {
+                callback.call(this, cls, pos);
+            });
+        }
+
+        /**
+         * Получить информационный массив по всем классам в HTML
+         * @private
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function searchClasses(html) {
+
+            var classesInfo = [];
+
+            // Перебор всех атрибутов class в html
+            iterateSubstr(html, /\s+class\s*=\s*('|")\s*[-A-Za-z0-9_\s*]+\s*('|")/g, function(classAttr) {
+
+                iterateClassesInAttr(getClassAttrContent(classAttr[0]), function(cls, pos) {
+                    classesInfo.push({
+                        type: 'class',
+                        position: classAttr.index + pos, // Для сохранения последовательности классов в атрибуте
+                        val: cls
+                    });
+                });
+            });
+
+            return classesInfo;
+        }
+
+        /**
+         * Узнать является ли тег одиночным
+         * @private
+         * @param {string} tag Имя тега
+         * @returns {boolean}
+         */
+        function isSingleTag(tag) {
+            return !!~[
+                '!doctype', 'area', 'base', 'br', 'col', 'command', 'embed', 'frame',
+                'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'wbr'
+            ].indexOf(tag);
+        }
+
+        /**
+         * Получить массив тегов с их классами
+         * @private
+         * @param {Array} htmlStructureInfo Информационный массив по HTML-структуре
+         * @returns {Array}
+         */
+        function putClassesIntoTags(htmlStructureInfo) {
+
+            var tags = [];
+
+            htmlStructureInfo.forEach(function(element) {
+
+                switch(element.type) {
+
+                    case 'tag-open':
+                        tags.push({
+                            type: element.type,
+                            name: element.name,
+                            single: isSingleTag(element.name),
+                            classes: []
+                        });
+                        break;
+
+                    case 'class':
+                        ~that.params.ignore.indexOf(element.val) || tags[tags.length - 1].classes.push(element.val);
+                        break;
+
+                    case 'tag-close':
+                        tags.push({
+                            type: element.type
+                        });
+                }
+            });
+
+            return tags;
+        }
+
+        /**
+         * Получить плоский массив классов с указанием их уровня вложенности
+         * @private
+         * @param {Array} tags Массив тегов с их классами
+         * @returns {Array}
+         */
+        function getClassLevels(tags) {
+
+            var classes = [],
+                tree = [], // Для контроля уровня вложенности
+                exist = []; // Добавленные классы
+
+            tags.forEach(function(tag) {
+                if(tag.type === 'tag-open') {
+                    tree.push(tag);
+                    addClasses(tag.name, tag.classes, getTagsWithClassesCount());
+                    tag.single && tree.pop();
+                } else {
+                    tree.pop();
+                }
+            });
+
+            /**
+             * Получить текущее количество тегов с классами
+             * @private
+             * @returns {number}
+             */
+            function getTagsWithClassesCount() {
+
+                var count = -1;
+
+                tree.forEach(function(tag) {
+                    tag.classes.length > 0 && count++;
+                });
+
+                return count;
+            }
+
+            /**
+             * Добавить класс к выводу
+             * @private
+             * @param {string} tag Имя тега
+             * @param {Array} tagClasses Массив классов тега
+             * @param {number} level Уровень вложенности тега
+             */
+            function addClasses(tag, tagClasses, level) {
+
+                tagClasses.forEach(function(cls) {
+
+                    if(~exist.indexOf(cls)) return;
+                    exist.push(cls);
+
+                    classes.push({
+                        tag: tag,
+                        name: cls,
+                        level: level
+                    });
+                });
+            }
+
+            return classes;
+        }
+
+        /**
+         * Нужно ли указывать тег в селекторе
+         * @private
+         * @param {string} tag Имя тега
+         * @returns {boolean}
+         */
+        function isOkTag(tag) {
+            var paramsTag = that.params.tag;
+            if(typeof paramsTag === 'boolean') return paramsTag;
+            return !!~paramsTag.indexOf(tag);
+        }
+
+        /**
+         * Получить открывающую скобку
+         * @private
+         * @param {string} indent Сформированный отступ до селектора
+         * @returns {string}
+         */
+        function getBrace(indent) {
+            switch(that.params.brace) {
+                case 'default':
+                    return ' {';
+                case 'newline':
+                    return '\n' + indent + '{';
+            }
+        }
+
+        /**
+         * Сформировать CSS-каркас
+         * @private
+         * @param {Array} classes Плоский массив классов с указанием их уровня вложенности
+         * @returns {string}
+         */
+        function genCSSSkeleton(classes) {
+
+            var css = [];
+
+            classes.forEach(function(cls) {
+
+                var paramsIndent = that.params.indent,
+                    indent = !that.params.flat ? duplicateStr(paramsIndent, cls.level) : '',
+                    innerIndent = that.params.inner ? '\n' + indent + paramsIndent + '\n' + indent : '',
+                    tag = isOkTag(cls.tag) ? cls.tag : '';
+
+                css.push(indent + tag + '.' + cls.name + getBrace(indent) + innerIndent + '}');
+            });
+
+            return css.join('\n' + that.params.line);
+        }
+
+        /**
+         * Получить информационный массив по HTML-структуре
+         * @private
+         * @param {string} html Исходный HTML
+         * @returns {Array}
+         */
+        function getHtmlStructureInfo(html) {
+            return searchOpenTags(html)
+                .concat(searchCloseTags(html))
+                .concat(searchClasses(html))
+                .sort(function(a, b) {
+                    return a.position - b.position;
+                });
+        }
+
+        return genCSSSkeleton(
+            getClassLevels(
+                putClassesIntoTags(
+                    getHtmlStructureInfo(this.html)
+                )
+            )
+        );
+    }
+};
+
+window.Autoclasscss = Autoclasscss;
+
+})(window, undefined);

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>AutoclassCSS — Test</title>
+        <script src="../bower_components/jquery/jquery.min.js"></script>
+
+        <script src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+        <script src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+        <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css">
+
+        <script src="../autoclasscss.js"></script>
+
+        <script src="simple.js"></script>
+        <script src="indent.js"></script>
+        <script src="ignore.js"></script>
+        <script src="flat.js"></script>
+        <script src="inner.js"></script>
+        <script src="tag.js"></script>
+        <script src="brace.js"></script>
+        <script src="line.js"></script>
+        <script src="set.js"></script>
+
+        <script type="text/javascript">
+            (function() {
+                var jasmineEnv = jasmine.getEnv();
+                jasmineEnv.updateInterval = 1000;
+
+                var trivialReporter = new jasmine.TrivialReporter();
+
+                jasmineEnv.addReporter(trivialReporter);
+
+                jasmineEnv.specFilter = function(spec) {
+                    return trivialReporter.specFilter(spec);
+                };
+
+                var currentWindowOnload = window.onload;
+
+                window.onload = function() {
+                    if (currentWindowOnload) {
+                        currentWindowOnload();
+                    }
+                    execJasmine();
+                };
+
+                function execJasmine() {
+                    jasmineEnv.execute();
+                }
+
+            })();
+        </script>
+    </head>
+    <body></body>
+</html>
