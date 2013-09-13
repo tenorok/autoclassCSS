@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>AutoclassCSS — Генератор CSS-каркаса</title>
+        <link rel="stylesheet" href="vendor/normalize.css">
+        <script src="vendor/jquery.js"></script>
+        <script src="vendor/ace.js"></script>
+        <script src="autoclasscss.js"></script>
+        <link rel="stylesheet" href="assets/index.css">
+        <script src="assets/index.js"></script>
+    </head>
+    <body>
+        <div class="page">
+            <h1 class="header">AutoclassCSS — Генератор CSS-каркаса</h1>
+            <div class="info">
+                <div class="about">
+                    <p class="about__p"><a href="https://github.com/tenorok/autoclasscss" class="about__a">AutoclassCSS</a> — это инструмент для формирования каркаса CSS-классов на основе HTML-разметки.<br>Оформление каркаса настраивается по вкусу, благодаря удобному API.</p>
+                    <p class="about__p">На этой странице можно быстро попробовать AutoclassCSS в действии.</p>
+                </div>
+                <a class="download" href="">
+                    <div class="download__text">Скачать v0.0.1</div>
+                </a>
+            </div>
+            <div class="settings-panel">
+                <ul class="settings">
+                    <li class="settings__item">
+                        <select class="select opt-indent-type">
+                            <option value="spaces">отступ пробелами</option>
+                            <option value="tabs">отступ табами</option>
+                        </select>
+                        <input type="number" value="4" class="input input_size_s opt-indent-size">
+                    </li>
+                    <li class="settings__item">
+                        <select class="select opt-brace">
+                            <option value="default">скобка рядом с селектором</option>
+                            <option value="newline">скобка под селектором</option>
+                        </select>
+                    </li>
+                </ul>
+                <ul class="settings">
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-flat"> плоский список</label>
+                    </li>
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-line-state"> отбивать пустой строкой</label>
+                        <input type="number" value="1" class="input input_size_s opt-line-size">
+                    </li>
+                </ul>
+                <ul class="settings">
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" class="checkbox opt-tag"> указывать тег</label>
+                    </li>
+                    <li class="settings__item">
+                        <label class="label"><input type="checkbox" checked class="checkbox opt-inner"> отступ внутри скобок</label>
+                    </li>
+                </ul>
+                <ul class="settings">
+                    <li class="settings__item">
+                        <input type="text" placeholder="class1, class2, class3" class="input input_size_l opt-ignore"> — игнорируемые классы
+                    </li>
+                </ul>
+            </div>
+            <div class="html-block">
+                <h2 class="title">Вставьте сюда HTML</h2>
+                <div class="area area_type_html" id="html-editable"></div>
+            </div>
+            <div class="css-block">
+                <h2 class="title">Скопируйте сформированный CSS-каркас</h2>
+                <pre class="area area_type_css" contenteditable></pre>
+            </div>
+        </div>
+        <a href="https://github.com/tenorok/autoclasscss"><img style="position: absolute; top: 0; right: 0; border: 0; width: 149px; height: 149px;" src="http://aral.github.com/fork-me-on-github-retina-ribbons/right-orange@2x.png" alt="Fork me on GitHub"></a>
+    </body>
+</html>
