@@ -1,5 +1,5 @@
 ﻿/**
- * AutoclassCSS - Generator CSS skeleton {@link https://github.com/tenorok/autoclassCSS}
+ * @file AutoclassCSS - Generator CSS skeleton {@link https://github.com/tenorok/autoclassCSS}
  * @copyright 2012–2013 Artem Kurbatov, tenorok.ru
  * @license MIT license
  * @version 0.0.1
@@ -10,6 +10,7 @@
 /**
  * Конструктор
  * @constructor
+ * @name Autoclasscss
  * @param {string} [html] HTML-разметка
  */
 function Autoclasscss(html) {
@@ -31,6 +32,7 @@ function Autoclasscss(html) {
 
 /**
  * Продублировать строку
+ * @private
  * @param {string} string Строка
  * @param {number} count Количество дублирований
  * @returns {string}
@@ -43,6 +45,7 @@ Autoclasscss.prototype = {
 
     /**
      * Настройка отступов
+     * @memberof Autoclasscss#
      * @param {string} type Тип отступов, принимает одно из следующих значений:
      *     "tabs" - табы
      *     "spaces" - пробелы
@@ -71,6 +74,7 @@ Autoclasscss.prototype = {
 
     /**
      * Добавление игнорируемых классов
+     * @memberof Autoclasscss#
      * @param {string|Array|boolean} classes Класс, массив классов или false для отмены игнорирования
      * @returns {this}
      */
@@ -94,6 +98,7 @@ Autoclasscss.prototype = {
 
     /**
      * Установление плоского или вложенного списка селекторов
+     * @memberof Autoclasscss#
      * @param {boolean} state Плоский или не плоский список
      * @returns {this}
      */
@@ -104,6 +109,7 @@ Autoclasscss.prototype = {
 
     /**
      * Добавлять или не добавлять отступы внутри фигурных скобок
+     * @memberof Autoclasscss#
      * @param {boolean} state Добавлять или не добавлять
      * @returns {this}
      */
@@ -114,6 +120,7 @@ Autoclasscss.prototype = {
 
     /**
      * Указывать тег в селекторе
+     * @memberof Autoclasscss#
      * @param {boolean|string|Array} tag Значение опции можно передавать в разном виде, например:
      *     true|false - указывать или не указывать все теги
      *     'div' - указывать тег div
@@ -127,6 +134,7 @@ Autoclasscss.prototype = {
 
     /**
      * Способ отображения открывающей скобки
+     * @memberof Autoclasscss#
      * @param {string} type Способ отображения, принимает одно из следующих значений:
      *     "default" - через пробел после селектора
      *     "newline" - на новой строке под селектором
@@ -145,6 +153,7 @@ Autoclasscss.prototype = {
 
     /**
      * Отбивать селекторы пустой строкой
+     * @memberof Autoclasscss#
      * @param {boolean} state Отбивать или не отбивать
      * @param {number} [count=1] Количество строк для отбива
      * @returns {this}
@@ -156,6 +165,7 @@ Autoclasscss.prototype = {
 
     /**
      * Установить HTML-разметку
+     * @memberof Autoclasscss#
      * @param {string} html HTML-разметка
      * @returns {this}
      */
@@ -166,6 +176,7 @@ Autoclasscss.prototype = {
 
     /**
      * Получить CSS-каркас
+     * @memberof Autoclasscss#
      * @returns {string} CSS-каркас
      */
     get: function() {
@@ -174,12 +185,14 @@ Autoclasscss.prototype = {
 
         /**
          * Колбек вызывается для каждого вхождения подстроки в строку
+         * @private
          * @callback Autoclasscss~iterateSubstrCallback
-         * @param {Object} Информация о текущем вхождении
+         * @param {Object} match Информация о текущем вхождении
          */
 
         /**
          * Проитерироваться по всем вхождениям подстроки в строку
+         * @private
          * @param {string} string Исходная строка
          * @param {RegExp} regexp Регулярное выражения для поиска подстроки
          * @param {Autoclasscss~iterateSubstrCallback} callback Колбек будет вызван для каждого вхождения
@@ -195,6 +208,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить информационный массив по всем открывающим тегам в HTML
+         * @private
          * @param {string} html Исходный HTML
          * @returns {Array}
          */
@@ -215,6 +229,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить информационный массив по всем закрывающим тегам в HTML
+         * @private
          * @param {string} html Исходный HTML
          * @returns {Array}
          */
@@ -234,6 +249,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить содержимое атрибута class
+         * @private
          * @param {string} classAttr Вырванный из HTML кусок с атрибутом class
          * @returns {string}
          */
@@ -243,13 +259,15 @@ Autoclasscss.prototype = {
 
         /**
          * Колбек вызывается для каждого класса в атрибуте class
+         * @private
          * @callback Autoclasscss~iterateClassesInAttrCallback
-         * @param {string} Текущий класс
-         * @param {number} Порядковый номер класса в атрибуте
+         * @param {string} cls Текущий класс
+         * @param {number} pos Порядковый номер класса в атрибуте
          */
 
         /**
          * Проитерироваться по классам в атрибуте class
+         * @private
          * @param {string} classAttrContent Содержимое атрибута class
          * @param {Autoclasscss~iterateClassesInAttrCallback} callback Колбек будет вызван для каждого класса
          */
@@ -265,6 +283,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить информационный массив по всем классам в HTML
+         * @private
          * @param {string} html Исходный HTML
          * @returns {Array}
          */
@@ -289,6 +308,7 @@ Autoclasscss.prototype = {
 
         /**
          * Узнать является ли тег одиночным
+         * @private
          * @param {string} tag Имя тега
          * @returns {boolean}
          */
@@ -301,6 +321,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить массив тегов с их классами
+         * @private
          * @param {Array} htmlStructureInfo Информационный массив по HTML-структуре
          * @returns {Array}
          */
@@ -337,6 +358,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить плоский массив классов с указанием их уровня вложенности
+         * @private
          * @param {Array} tags Массив тегов с их классами
          * @returns {Array}
          */
@@ -358,6 +380,7 @@ Autoclasscss.prototype = {
 
             /**
              * Получить текущее количество тегов с классами
+             * @private
              * @returns {number}
              */
             function getTagsWithClassesCount() {
@@ -373,6 +396,7 @@ Autoclasscss.prototype = {
 
             /**
              * Добавить класс к выводу
+             * @private
              * @param {string} tag Имя тега
              * @param {Array} tagClasses Массив классов тега
              * @param {number} level Уровень вложенности тега
@@ -397,6 +421,7 @@ Autoclasscss.prototype = {
 
         /**
          * Нужно ли указывать тег в селекторе
+         * @private
          * @param {string} tag Имя тега
          * @returns {boolean}
          */
@@ -408,6 +433,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить открывающую скобку
+         * @private
          * @param {string} indent Сформированный отступ до селектора
          * @returns {string}
          */
@@ -422,6 +448,7 @@ Autoclasscss.prototype = {
 
         /**
          * Сформировать CSS-каркас
+         * @private
          * @param {Array} classes Плоский массив классов с указанием их уровня вложенности
          * @returns {string}
          */
@@ -444,6 +471,7 @@ Autoclasscss.prototype = {
 
         /**
          * Получить информационный массив по HTML-структуре
+         * @private
          * @param {string} html Исходный HTML
          * @returns {Array}
          */
