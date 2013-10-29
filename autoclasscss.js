@@ -41,6 +41,22 @@ function duplicateStr(string, count) {
     return new Array(count + 1).join(string);
 }
 
+function isString(string) {
+    return typeof string === 'string';
+}
+
+function isBoolean(boolean) {
+    return typeof boolean === 'boolean';
+}
+
+function isArray(array) {
+    return array instanceof Array;
+}
+
+function isRegexp(regexp) {
+    return regexp instanceof RegExp;
+}
+
 Autoclasscss.prototype = {
 
     /**
