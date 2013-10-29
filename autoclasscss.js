@@ -48,7 +48,7 @@ function setOptions(customOptions) {
     var options = mergeOptions(customOptions);
 
     Object.keys(options).forEach(function(option) {
-        this[option].apply(this, getOptionAsArray(options[option]));
+        this[option].apply(this, getOptionAsArray(option, options[option]));
     }.bind(this));
 
     return this;
@@ -58,11 +58,18 @@ function setOptions(customOptions) {
  * Получить опцию в виде массива
  * Для передачи аргументов в apply
  * @private
- * @param {*} option Опция
+ * @param {string} name Имя опции
+ * @param {*} value Значение опции
  * @returns {Array}
  */
-function getOptionAsArray(option) {
-    return isArray(option) ? option : [option];
+function getOptionAsArray(name, value) {
+
+    // Если требуется получить опцию ignore со значением в виде массива
+    if(name === 'ignore' && isArray(value)) {
+        return [value];
+    }
+
+    return isArray(value) ? value : [value];
 }
 
 /**
