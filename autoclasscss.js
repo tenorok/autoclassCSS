@@ -5,7 +5,7 @@
  * @version 0.0.1
  */
 
-(function(window) {
+(function(global) {
 
 /**
  * Конструктор
@@ -494,6 +494,6 @@ Autoclasscss.prototype = {
     }
 };
 
-window.Autoclasscss = Autoclasscss;
+global.Autoclasscss = Autoclasscss;
 
-})(window, undefined);
+})(this, undefined);
