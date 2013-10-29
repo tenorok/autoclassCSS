@@ -45,12 +45,16 @@ function isString(string) {
     return typeof string === 'string';
 }
 
-function isBoolean(boolean) {
-    return typeof boolean === 'boolean';
+function isBoolean(bool) {
+    return typeof bool === 'boolean';
 }
 
 function isArray(array) {
     return array instanceof Array;
+}
+
+function isObject(object) {
+    return object instanceof Object;
 }
 
 function isRegexp(regexp) {
@@ -156,7 +160,7 @@ Autoclasscss.prototype = {
      * @returns {this}
      */
     tag: function(tag) {
-        this.params.tag = typeof tag === 'string' ? [tag] : tag;
+        this.params.tag = isString(tag) ? [tag] : tag;
         return this;
     },
 
@@ -471,7 +475,7 @@ Autoclasscss.prototype = {
          */
         function isOkTag(tag) {
             var paramsTag = that.params.tag;
-            if(typeof paramsTag === 'boolean') return paramsTag;
+            if(isBoolean(paramsTag)) return paramsTag;
             return !!~paramsTag.indexOf(tag);
         }
 
