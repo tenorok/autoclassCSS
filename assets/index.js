@@ -194,8 +194,27 @@ Demo.prototype = {
         this.autoclasscss.indent(this.opt.indentType.val(), +event.target.value);
     },
 
+    isStringRegexp: function(string) {
+        var len = string.length;
+        return len > 2 && string[0] === '/' && string[len - 1] === '/';
+    },
+
+    getStringRegexp: function(string) {
+        var regexp;
+        try { regexp = new RegExp(string.slice(1, -1)) } catch(e) {}
+        return regexp;
+    },
+
     bindIgnore: function(event) {
-        this.autoclasscss.ignore(false).ignore(event.target.value.split(',').map(function(e) { return $.trim(e); }));
+
+        this.autoclasscss.ignore(false);
+
+        var ignore = $.trim(event.target.value);
+        if(this.isStringRegexp(ignore)) {
+            this.autoclasscss.ignore(this.getStringRegexp(ignore));
+        } else {
+            this.autoclasscss.ignore(ignore.split(',').map(function(e) { return $.trim(e); }));
+        }
     },
 
     bindFlat: function(event) {
