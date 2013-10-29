@@ -12,8 +12,15 @@
  * @constructor
  * @name Autoclasscss
  * @param {string} [html] HTML-разметка
+ * @param {Object} [options] Опции
  */
-function Autoclasscss(html) {
+function Autoclasscss(html, options) {
+
+    // Если переданы только опции
+    if(isObject(html)) {
+        options = html;
+        html = '';
+    }
 
     this.html = html || '';
 
@@ -21,13 +28,74 @@ function Autoclasscss(html) {
         ignore: []
     };
 
-    this
-        .indent('spaces', 4)
-        .flat(false)
-        .inner(true)
-        .tag(false)
-        .brace('default')
-        .line(false);
+    // Если переданы опции
+    if(isObject(options)) {
+        return setOptions.call(this, options);
+    }
+
+    // Устанавливаются стандартные опции
+    setOptions.call(this);
+}
+
+/**
+ * Установить опции
+ * @private
+ * @param {Object} [customOptions] Опции или ничего для установления стандартных опций
+ * @returns {this}
+ */
+function setOptions(customOptions) {
+
+    var options = mergeOptions(customOptions);
+
+    Object.keys(options).forEach(function(option) {
+        this[option].apply(this, getOptionAsArray(options[option]));
+    }.bind(this));
+
+    return this;
+}
+
+/**
+ * Получить опцию в виде массива
+ * Для передачи аргументов в apply
+ * @private
+ * @param {*} option Опция
+ * @returns {Array}
+ */
+function getOptionAsArray(option) {
+    return isArray(option) ? option : [option];
+}
+
+/**
+ * Объединить опции со стандартными опциями
+ * @private
+ * @param {Object} [customOptions] Опции
+ * @returns {*}
+ */
+function mergeOptions(customOptions) {
+    var options = getDefaultOptions();
+    if(!customOptions) return options;
+
+    Object.keys(customOptions).forEach(function(option) {
+        options[option] = customOptions[option];
+    }.bind(this));
+
+    return options;
+}
+
+/**
+ * Получить стандартные опции
+ * @private
+ * @returns {Object}
+ */
+function getDefaultOptions() {
+    return {
+        brace: 'default',
+        flat: false,
+        indent: ['spaces', 4],
+        inner: true,
+        line: false,
+        tag: false
+    };
 }
 
 /**
