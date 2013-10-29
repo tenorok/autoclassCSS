@@ -41,6 +41,22 @@ function duplicateStr(string, count) {
     return new Array(count + 1).join(string);
 }
 
+function isString(string) {
+    return typeof string === 'string';
+}
+
+function isBoolean(boolean) {
+    return typeof boolean === 'boolean';
+}
+
+function isArray(array) {
+    return array instanceof Array;
+}
+
+function isRegexp(regexp) {
+    return regexp instanceof RegExp;
+}
+
 Autoclasscss.prototype = {
 
     /**
@@ -75,24 +91,36 @@ Autoclasscss.prototype = {
     /**
      * Добавление игнорируемых классов
      * @memberof Autoclasscss#
-     * @param {string|Array|boolean} classes Класс, массив классов или false для отмены игнорирования
+     * @param {string|Array|boolean|RegExp} classes Класс, массив классов, регулярное выражение или false для отмены игнорирования
      * @returns {this}
      */
     ignore: function(classes) {
 
-        switch(typeof classes) {
+        // Если false
+        if(isBoolean(classes) && !classes) {
+            this.params.ignore = [];
+            return this;
+        }
 
-            case 'string':
-                this.params.ignore.push(classes);
-                return this;
+        if(isRegexp(classes)) {
+            this.params.ignore = classes;
+            return this;
+        }
 
-            case 'object':
-                this.params.ignore = this.params.ignore.concat(classes);
-                return this;
+        // Если в ignore не массив, а регулярное выражение
+        if(!isArray(this.params.ignore)) {
+            // Сброс ignore в пустой массив, чтобы не было ошибок при добавлении
+            this.params.ignore = [];
+        }
 
-            case 'boolean':
-                this.params.ignore = [];
-                return this;
+        if(isString(classes)) {
+            this.params.ignore.push(classes);
+            return this;
+        }
+
+        if(isArray(classes)) {
+            this.params.ignore = this.params.ignore.concat(classes);
+            return this;
         }
     },
 
@@ -320,6 +348,22 @@ Autoclasscss.prototype = {
         }
 
         /**
+         * Является ли класс игнорируемым
+         * @private
+         * @param {string} cls Имя класса
+         * @returns {boolean}
+         */
+        function isIgnoringClass(cls) {
+
+            if(isArray(that.params.ignore)) {
+                return ~that.params.ignore.indexOf(cls);
+            }
+
+            // Иначе в ignore регулярное выражение
+            return that.params.ignore.test(cls);
+        }
+
+        /**
          * Получить массив тегов с их классами
          * @private
          * @param {Array} htmlStructureInfo Информационный массив по HTML-структуре
@@ -343,7 +387,7 @@ Autoclasscss.prototype = {
                         break;
 
                     case 'class':
-                        ~that.params.ignore.indexOf(element.val) || tags[tags.length - 1].classes.push(element.val);
+                        isIgnoringClass(element.val) || tags[tags.length - 1].classes.push(element.val);
                         break;
 
                     case 'tag-close':
