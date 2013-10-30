@@ -34,7 +34,7 @@ function Autoclasscss(html, options) {
     }
 
     // Устанавливаются стандартные опции
-    setOptions.call(this);
+    return setOptions.call(this);
 }
 
 /**
@@ -47,9 +47,9 @@ function setOptions(customOptions) {
 
     var options = mergeOptions(customOptions);
 
-    Object.keys(options).forEach(function(option) {
+    for(var option in options) {
         this[option].apply(this, getOptionAsArray(option, options[option]));
-    }.bind(this));
+    }
 
     return this;
 }
@@ -64,12 +64,23 @@ function setOptions(customOptions) {
  */
 function getOptionAsArray(name, value) {
 
-    // Если требуется получить опцию ignore со значением в виде массива
-    if(name === 'ignore' && isArray(value)) {
+    if(isOptionParamCanBeArray(name, value)) {
         return [value];
     }
 
     return isArray(value) ? value : [value];
+}
+
+/**
+ * Может ли опция принимать массив в качестве аргумента
+ * Некоторым опциям надо передавать параметр в виде массива
+ * @private
+ * @param {string} name Имя опции
+ * @param {*} value Значение опции
+ * @returns {boolean}
+ */
+function isOptionParamCanBeArray(name, value) {
+    return !!~['ignore', 'tag'].indexOf(name) && isArray(value);
 }
 
 /**
@@ -82,9 +93,9 @@ function mergeOptions(customOptions) {
     var options = getDefaultOptions();
     if(!customOptions) return options;
 
-    Object.keys(customOptions).forEach(function(option) {
+    for(var option in customOptions) {
         options[option] = customOptions[option];
-    }.bind(this));
+    }
 
     return options;
 }
