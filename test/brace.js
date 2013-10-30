@@ -49,6 +49,7 @@ describe('Тестирование опции: brace', function() {
 
     it('Без опции', function() {
         expect(new Autoclasscss(html).get()).toBe(data[0][1]);
+        expect(new Autoclasscss().set(html).get()).toBe(data[0][1]);
     });
 
     it('Перебор возможных вариантов опции', function() {
@@ -58,6 +59,8 @@ describe('Тестирование опции: brace', function() {
                     .brace(test[0])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss(html, { brace: test[0] }).get()).toBe(test[1]);
         });
     });
 });

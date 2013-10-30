@@ -46,6 +46,8 @@ describe('Тестирование опции: inner', function() {
                     .inner(test[0])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss(html, { inner: test[0] }).get()).toBe(test[1]);
         });
     });
 });

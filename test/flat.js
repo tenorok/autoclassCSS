@@ -54,6 +54,8 @@ describe('Тестирование опции: flat', function() {
                     .flat(test[0])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss({ flat: test[0] }).set(html).get()).toBe(test[1]);
         });
     });
 });
