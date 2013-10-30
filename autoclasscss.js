@@ -12,22 +12,106 @@
  * @constructor
  * @name Autoclasscss
  * @param {string} [html] HTML-разметка
+ * @param {Object} [options] Опции
  */
-function Autoclasscss(html) {
+function Autoclasscss(html, options) {
+
+    // Если переданы только опции
+    if(isObject(html)) {
+        options = html;
+        html = '';
+    }
 
     this.html = html || '';
+    this.params = {};
 
-    this.params = {
-        ignore: []
+    // Если переданы опции
+    if(isObject(options)) {
+        return setOptions.call(this, options);
+    }
+
+    // Устанавливаются стандартные опции
+    return setOptions.call(this);
+}
+
+/**
+ * Установить опции
+ * @private
+ * @param {Object} [customOptions] Опции или ничего для установления стандартных опций
+ * @returns {this}
+ */
+function setOptions(customOptions) {
+
+    var options = mergeOptions(customOptions);
+
+    for(var option in options) {
+        this[option].apply(this, getOptionAsArray(option, options[option]));
+    }
+
+    return this;
+}
+
+/**
+ * Получить опцию в виде массива
+ * Для передачи аргументов в apply
+ * @private
+ * @param {string} name Имя опции
+ * @param {*} value Значение опции
+ * @returns {Array}
+ */
+function getOptionAsArray(name, value) {
+
+    if(isOptionParamCanBeArray(name, value)) {
+        return [value];
+    }
+
+    return isArray(value) ? value : [value];
+}
+
+/**
+ * Может ли опция принимать массив в качестве аргумента
+ * Некоторым опциям надо передавать параметр в виде массива
+ * @private
+ * @param {string} name Имя опции
+ * @param {*} value Значение опции
+ * @returns {boolean}
+ */
+function isOptionParamCanBeArray(name, value) {
+    return !!~['ignore', 'tag'].indexOf(name) && isArray(value);
+}
+
+/**
+ * Объединить опции со стандартными опциями
+ * @private
+ * @param {Object} [customOptions] Опции
+ * @returns {*}
+ */
+function mergeOptions(customOptions) {
+    var options = getDefaultOptions();
+    if(!customOptions) return options;
+
+    for(var option in customOptions) {
+        options[option] = customOptions[option];
+    }
+
+    return options;
+}
+
+/**
+ * Получить стандартные опции
+ * @private
+ * @returns {Object}
+ */
+function getDefaultOptions() {
+    return {
+        brace: 'default',
+        flat: false,
+        ignore: false,
+        indent: ['spaces', 4],
+        inner: true,
+        line: false,
+        tag: false
     };
-
-    this
-        .indent('spaces', 4)
-        .flat(false)
-        .inner(true)
-        .tag(false)
-        .brace('default')
-        .line(false);
 }
 
 /**
@@ -45,12 +129,16 @@ function isString(string) {
     return typeof string === 'string';
 }
 
-function isBoolean(boolean) {
-    return typeof boolean === 'boolean';
+function isBoolean(bool) {
+    return typeof bool === 'boolean';
 }
 
 function isArray(array) {
     return array instanceof Array;
+}
+
+function isObject(object) {
+    return object instanceof Object;
 }
 
 function isRegexp(regexp) {
@@ -156,7 +244,7 @@ Autoclasscss.prototype = {
      * @returns {this}
      */
     tag: function(tag) {
-        this.params.tag = typeof tag === 'string' ? [tag] : tag;
+        this.params.tag = isString(tag) ? [tag] : tag;
         return this;
     },
 
@@ -471,7 +559,7 @@ Autoclasscss.prototype = {
          */
         function isOkTag(tag) {
             var paramsTag = that.params.tag;
-            if(typeof paramsTag === 'boolean') return paramsTag;
+            if(isBoolean(paramsTag)) return paramsTag;
             return !!~paramsTag.indexOf(tag);
         }
 

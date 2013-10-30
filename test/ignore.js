@@ -134,6 +134,8 @@ describe('Тестирование опции: ignore', function() {
                     .ignore(test[0][1])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss({ ignore: test[0][1] }).set(html).get()).toBe(test[1]);
         });
     });
 });
