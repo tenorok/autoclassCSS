@@ -23,10 +23,7 @@ function Autoclasscss(html, options) {
     }
 
     this.html = html || '';
-
-    this.params = {
-        ignore: []
-    };
+    this.params = {};
 
     // Если переданы опции
     if(isObject(options)) {
@@ -109,6 +106,7 @@ function getDefaultOptions() {
     return {
         brace: 'default',
         flat: false,
+        ignore: false,
         indent: ['spaces', 4],
         inner: true,
         line: false,
