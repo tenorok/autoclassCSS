@@ -2,7 +2,7 @@
  * @file AutoclassCSS - Generator CSS skeleton {@link https://github.com/tenorok/autoclassCSS}
  * @copyright 2012–2013 Artem Kurbatov, tenorok.ru
  * @license MIT license
- * @version 0.0.2
+ * @version 0.0.3
  */
 
 (function(global) {
