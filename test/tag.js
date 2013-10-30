@@ -87,6 +87,8 @@ describe('Тестирование опции: tag', function() {
                     .tag(test[0])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss(html, { tag: test[0] }).get()).toBe(test[1]);
         });
     });
 });
