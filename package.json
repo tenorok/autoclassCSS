@@ -13,6 +13,7 @@
     "license": "MIT",
     "dependencies": {
         "bower": "~1.2",
-        "optimist": "0.6.0"
+        "optimist": "0.6.0",
+        "vow": "~0.3"
     }
 }
