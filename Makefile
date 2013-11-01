@@ -10,7 +10,7 @@ VERSION = $(shell node -e "console.log(require('./bower.json').version)")
 .PHONY: install doc gh-pages
 
 install:
-	npm install bower
+	npm install
 	$(BOWER) install
 
 doc:
