@@ -1,5 +1,6 @@
 BIN = ./node_modules/.bin
 BOWER = $(BIN)/bower
+MOCHA = $(BIN)/mocha
 BOWERPATH = ./bower_components
 
 # gh-pages
@@ -7,14 +8,17 @@ GHTMP = ../autoclasscss-gh-pages-tmp
 GHLIB = vendor
 VERSION = $(shell node -e "console.log(require('./bower.json').version)")
 
-.PHONY: install doc gh-pages
+.PHONY: install doc gh-pages test
 
 install:
-	npm install bower
+	npm install
 	$(BOWER) install
 
 doc:
 	./bower_components/jsdoc/jsdoc autoclasscss.js -d jsdoc
+
+test:
+	$(MOCHA) --reporter list test/cli/
 
 gh-pages: doc
 	mkdir -p $(GHTMP)/$(GHLIB)

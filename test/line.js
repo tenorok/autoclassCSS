@@ -89,6 +89,10 @@ describe('Тестирование опции: line', function() {
         expect(new Autoclasscss(html).get()).toBe(data[0][1]);
     });
 
+    it('Передача одного параметра в виде опции', function() {
+        expect(new Autoclasscss(html, { line: true }).get()).toBe(data[1][1]);
+    });
+
     it('Перебор возможных вариантов опции', function() {
         data.forEach(function(test) {
             expect(
@@ -96,6 +100,8 @@ describe('Тестирование опции: line', function() {
                     .line(test[0][0], test[0][1])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss(html, { line: [test[0][0], test[0][1]] }).get()).toBe(test[1]);
         });
     });
 });

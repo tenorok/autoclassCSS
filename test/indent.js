@@ -102,6 +102,8 @@ describe('Тестирование опции: indent', function() {
                     .indent(test[0][0], test[0][1])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss(html, { indent: [test[0][0], test[0][1]] }).get()).toBe(test[1]);
         });
     });
 });

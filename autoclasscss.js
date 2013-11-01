@@ -2,32 +2,116 @@
  * @file AutoclassCSS - Generator CSS skeleton {@link https://github.com/tenorok/autoclassCSS}
  * @copyright 2012–2013 Artem Kurbatov, tenorok.ru
  * @license MIT license
- * @version 0.0.1
+ * @version 0.0.3
  */
 
-(function(window) {
+(function(global) {
 
 /**
  * Конструктор
  * @constructor
  * @name Autoclasscss
  * @param {string} [html] HTML-разметка
+ * @param {Object} [options] Опции
  */
-function Autoclasscss(html) {
+function Autoclasscss(html, options) {
+
+    // Если переданы только опции
+    if(isObject(html)) {
+        options = html;
+        html = '';
+    }
 
     this.html = html || '';
+    this.params = {};
 
-    this.params = {
-        ignore: []
+    // Если переданы опции
+    if(isObject(options)) {
+        return setOptions.call(this, options);
+    }
+
+    // Устанавливаются стандартные опции
+    return setOptions.call(this);
+}
+
+/**
+ * Установить опции
+ * @private
+ * @param {Object} [customOptions] Опции или ничего для установления стандартных опций
+ * @returns {this}
+ */
+function setOptions(customOptions) {
+
+    var options = mergeOptions(customOptions);
+
+    for(var option in options) {
+        this[option].apply(this, getOptionAsArray(option, options[option]));
+    }
+
+    return this;
+}
+
+/**
+ * Получить опцию в виде массива
+ * Для передачи аргументов в apply
+ * @private
+ * @param {string} name Имя опции
+ * @param {*} value Значение опции
+ * @returns {Array}
+ */
+function getOptionAsArray(name, value) {
+
+    if(isOptionParamCanBeArray(name, value)) {
+        return [value];
+    }
+
+    return isArray(value) ? value : [value];
+}
+
+/**
+ * Может ли опция принимать массив в качестве аргумента
+ * Некоторым опциям надо передавать параметр в виде массива
+ * @private
+ * @param {string} name Имя опции
+ * @param {*} value Значение опции
+ * @returns {boolean}
+ */
+function isOptionParamCanBeArray(name, value) {
+    return !!~['ignore', 'tag'].indexOf(name) && isArray(value);
+}
+
+/**
+ * Объединить опции со стандартными опциями
+ * @private
+ * @param {Object} [customOptions] Опции
+ * @returns {*}
+ */
+function mergeOptions(customOptions) {
+    var options = getDefaultOptions();
+    if(!customOptions) return options;
+
+    for(var option in customOptions) {
+        options[option] = customOptions[option];
+    }
+
+    return options;
+}
+
+/**
+ * Получить стандартные опции
+ * @private
+ * @returns {Object}
+ */
+function getDefaultOptions() {
+    return {
+        brace: 'default',
+        flat: false,
+        ignore: false,
+        indent: ['spaces', 4],
+        inner: true,
+        line: false,
+        tag: false
     };
-
-    this
-        .indent('spaces', 4)
-        .flat(false)
-        .inner(true)
-        .tag(false)
-        .brace('default')
-        .line(false);
 }
 
 /**
@@ -39,6 +123,26 @@ function Autoclasscss(html) {
  */
 function duplicateStr(string, count) {
     return new Array(count + 1).join(string);
+}
+
+function isString(string) {
+    return typeof string === 'string';
+}
+
+function isBoolean(bool) {
+    return typeof bool === 'boolean';
+}
+
+function isArray(array) {
+    return array instanceof Array;
+}
+
+function isObject(object) {
+    return object instanceof Object;
+}
+
+function isRegexp(regexp) {
+    return regexp instanceof RegExp;
 }
 
 Autoclasscss.prototype = {
@@ -75,24 +179,36 @@ Autoclasscss.prototype = {
     /**
      * Добавление игнорируемых классов
      * @memberof Autoclasscss#
-     * @param {string|Array|boolean} classes Класс, массив классов или false для отмены игнорирования
+     * @param {string|Array|boolean|RegExp} classes Класс, массив классов, регулярное выражение или false для отмены игнорирования
      * @returns {this}
      */
     ignore: function(classes) {
 
-        switch(typeof classes) {
+        // Если false
+        if(isBoolean(classes) && !classes) {
+            this.params.ignore = [];
+            return this;
+        }
 
-            case 'string':
-                this.params.ignore.push(classes);
-                return this;
+        if(isRegexp(classes)) {
+            this.params.ignore = classes;
+            return this;
+        }
 
-            case 'object':
-                this.params.ignore = this.params.ignore.concat(classes);
-                return this;
+        // Если в ignore не массив, а регулярное выражение
+        if(!isArray(this.params.ignore)) {
+            // Сброс ignore в пустой массив, чтобы не было ошибок при добавлении
+            this.params.ignore = [];
+        }
 
-            case 'boolean':
-                this.params.ignore = [];
-                return this;
+        if(isString(classes)) {
+            this.params.ignore.push(classes);
+            return this;
+        }
+
+        if(isArray(classes)) {
+            this.params.ignore = this.params.ignore.concat(classes);
+            return this;
         }
     },
 
@@ -128,7 +244,7 @@ Autoclasscss.prototype = {
      * @returns {this}
      */
     tag: function(tag) {
-        this.params.tag = typeof tag === 'string' ? [tag] : tag;
+        this.params.tag = isString(tag) ? [tag] : tag;
         return this;
     },
 
@@ -320,6 +436,22 @@ Autoclasscss.prototype = {
         }
 
         /**
+         * Является ли класс игнорируемым
+         * @private
+         * @param {string} cls Имя класса
+         * @returns {boolean}
+         */
+        function isIgnoringClass(cls) {
+
+            if(isArray(that.params.ignore)) {
+                return ~that.params.ignore.indexOf(cls);
+            }
+
+            // Иначе в ignore регулярное выражение
+            return that.params.ignore.test(cls);
+        }
+
+        /**
          * Получить массив тегов с их классами
          * @private
          * @param {Array} htmlStructureInfo Информационный массив по HTML-структуре
@@ -343,7 +475,7 @@ Autoclasscss.prototype = {
                         break;
 
                     case 'class':
-                        ~that.params.ignore.indexOf(element.val) || tags[tags.length - 1].classes.push(element.val);
+                        isIgnoringClass(element.val) || tags[tags.length - 1].classes.push(element.val);
                         break;
 
                     case 'tag-close':
@@ -427,7 +559,7 @@ Autoclasscss.prototype = {
          */
         function isOkTag(tag) {
             var paramsTag = that.params.tag;
-            if(typeof paramsTag === 'boolean') return paramsTag;
+            if(isBoolean(paramsTag)) return paramsTag;
             return !!~paramsTag.indexOf(tag);
         }
 
@@ -494,6 +626,6 @@ Autoclasscss.prototype = {
     }
 };
 
-window.Autoclasscss = Autoclasscss;
+global.Autoclasscss = Autoclasscss;
 
-})(window, undefined);
+})(this, undefined);

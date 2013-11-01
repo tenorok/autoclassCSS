@@ -149,6 +149,9 @@ describe('Общие тесты', function() {
     it('Перебор вариантов', function() {
         data.forEach(function(test) {
             expect(new Autoclasscss(test[0]).get()).toBe(test[1]);
+            expect(new Autoclasscss().set(test[0]).get()).toBe(test[1]);
+            expect(new Autoclasscss(test[0], {}).get()).toBe(test[1]);
+            expect(new Autoclasscss({}).set(test[0]).get()).toBe(test[1]);
         });
     });
 });

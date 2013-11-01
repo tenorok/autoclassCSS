@@ -80,6 +80,44 @@ describe('Тестирование опции: ignore', function() {
                 '    .c {\n' +
                 '        \n' +
                 '    }'
+            ],
+            [
+                [
+                    [],
+                    /[aci]/
+                ],
+
+                '.b {\n' +
+                '    \n' +
+                '}\n' +
+                '    .d {\n' +
+                '        \n' +
+                '    }'
+            ],
+            [
+                [
+                    ['a', 'b'],
+                    /i[34]/
+                ],
+
+                '.a {\n' +
+                '    \n' +
+                '}\n' +
+                '.i {\n' +
+                '    \n' +
+                '}\n' +
+                '.i2 {\n' +
+                '    \n' +
+                '}\n' +
+                '    .b {\n' +
+                '        \n' +
+                '    }\n' +
+                '        .d {\n' +
+                '            \n' +
+                '        }\n' +
+                '    .c {\n' +
+                '        \n' +
+                '    }'
             ]
         ];
 
@@ -96,6 +134,8 @@ describe('Тестирование опции: ignore', function() {
                     .ignore(test[0][1])
                     .get()
             ).toBe(test[1]);
+
+            expect(new Autoclasscss({ ignore: test[0][1] }).set(html).get()).toBe(test[1]);
         });
     });
 });
