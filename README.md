@@ -153,14 +153,38 @@ new Autoclasscss()
 #### Метод `get`
 Возвращает CSS-каркас на основе заданной HTML-разметки.
 
+## CLI
+
+Получить CSS-каркас из HTML-файла.
+
+    ./bin/autoclasscss index.html
+
+Сфоррмировать CSS-каркас с заданными опциями и сохранить результат в файл.
+Файл [опций](#%D0%9E%D0%BF%D1%86%D0%B8%D0%B8) удобно хранить в JSON-формате.
+Файл для сохранения результата создастся автоматически.
+
+    ./bin/autoclasscss -o options.json -s save.css index.html
+
 ## Разработка
 
-Тесты написаны на [Jasmine](http://pivotal.github.io/jasmine/), для прогона всех тестов, надо открыть страницу [test/test.html](https://github.com/tenorok/autoclassCSS/blob/master/test/test.html).
+Для разработки требуется [node.js](http://nodejs.org/) и [npm](https://npmjs.org/). В проекте используется пакетный менеджер [bower](https://github.com/bower/bower).
 
-В проекте используется пакетный менеджер [bower](https://github.com/bower/bower). Для его работы требуется [node.js](http://nodejs.org/) и [npm](https://npmjs.org/).
+Клиентские тесты написаны на [Jasmine](http://pivotal.github.io/jasmine/), для прогона всех тестов, надо открыть страницу [test/test.html](https://github.com/tenorok/autoclassCSS/blob/master/test/test.html).
 
-Установить bower и зависимости: `make install`
+### Цели
 
-Сгенерировать документация на основе JSDoc: `make doc`
+Установить зависимости.
 
-Обновить gh-pages: `make gh-pages`
+    make install
+
+Запустить тесты CLI. Написаны на [Mocha](http://visionmedia.github.io/mocha/)
+
+    make test
+
+Сгенерировать документация на основе JSDoc.
+
+    make doc
+
+Обновить gh-pages.
+
+    make gh-pages
