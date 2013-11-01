@@ -1,0 +1,5 @@
+{
+    "brace": "newline",
+    "ignore": ["menu__item"],
+    "tag": true
+}

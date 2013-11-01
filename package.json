@@ -1,0 +1,20 @@
+{
+    "name": "autoclasscss",
+    "version": "0.0.4",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tenorok/autoclassCSS.git"
+    },
+    "author": {
+        "name": "Artem Kurbatov",
+        "email": "mail@tenorok.ru",
+        "homepage": "http://tenorok.ru"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "bower": "~1.2",
+        "optimist": "0.6.0",
+        "vow": "~0.3",
+        "mocha": "~1.13"
+    }
+}
