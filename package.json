@@ -1,5 +1,6 @@
 {
     "name": "autoclasscss",
+    "description": "CSS skeleton generator",
     "version": "0.0.4",
     "repository": {
         "type": "git",
@@ -14,7 +15,15 @@
     "dependencies": {
         "bower": "~1.2",
         "optimist": "0.6.0",
-        "vow": "~0.3",
+        "vow": "~0.3"
+    },
+    "devDependencies": {
         "mocha": "~1.13"
+    },
+    "bin": {
+        "autoclasscss": "./bin/autoclasscss"
+    },
+    "scripts": {
+        "test": "./node_modules/.bin/mocha --reporter list test/cli/"
     }
 }
