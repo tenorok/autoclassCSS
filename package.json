@@ -1,7 +1,7 @@
 {
     "name": "autoclasscss",
     "description": "CSS skeleton generator",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "repository": {
         "type": "git",
         "url": "https://github.com/tenorok/autoclassCSS.git"
@@ -20,10 +20,12 @@
     "devDependencies": {
         "mocha": "~1.13"
     },
+    "main": "main.js",
     "bin": {
         "autoclasscss": "./bin/autoclasscss"
     },
     "scripts": {
-        "test": "./node_modules/.bin/mocha --reporter list test/cli/"
+        "test": "./node_modules/.bin/mocha --reporter list test/cli/",
+        "jsdoc": "./bower_components/jsdoc/jsdoc autoclasscss.js -d jsdoc"
     }
 }
