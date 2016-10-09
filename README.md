@@ -178,7 +178,7 @@ new Autoclasscss()
 
 Для разработки требуется [node.js](http://nodejs.org/) и [npm](https://npmjs.org/). В проекте используется пакетный менеджер [bower](https://github.com/bower/bower).
 
-Клиентские тесты написаны на [Jasmine](http://pivotal.github.io/jasmine/), для прогона всех тестов, надо открыть страницу [test/test.html](https://github.com/tenorok/autoclassCSS/blob/master/test/test.html).
+Клиентские тесты написаны на [Jasmine](https://jasmine.github.io/), для прогона всех тестов, надо открыть страницу [test/test.html](https://github.com/tenorok/autoclassCSS/blob/master/test/test.html).
 
 ### Цели
 
