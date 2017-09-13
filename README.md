@@ -186,7 +186,7 @@ new Autoclasscss()
 
     make install
 
-Запустить тесты CLI. Написаны на [Mocha](http://visionmedia.github.io/mocha/)
+Запустить тесты CLI. Написаны на [Mocha](http://mochajs.org/)
 
     make test
 
